@@ -1,0 +1,201 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ------------------------------------------------------
+// ENUMS
+// ------------------------------------------------------
+
+enum UserRole {
+  STUDENT
+  ADMIN
+}
+
+enum ListingType {
+  SALE
+  LOST
+  FOUND
+}
+
+enum ListingStatus {
+  ACTIVE
+  SOLD
+  RESOLVED
+  REMOVED
+}
+
+enum Category {
+  BOOKS
+  ELECTRONICS
+  CYCLES
+  ACCESSORIES
+  STATIONERY
+  CLOTHING
+  OTHER
+}
+
+enum Condition {
+  NEW
+  LIKE_NEW
+  GOOD
+  FAIR
+}
+
+enum ClaimStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ContactStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  DISMISSED
+}
+
+// ------------------------------------------------------
+// MODELS
+// ------------------------------------------------------
+
+/// User model representing verified campus students and administrators.
+/// Structured to support seamless future Auth.js integration.
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  hostelBlock   String?
+  role          UserRole  @default(STUDENT)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relationships
+  listings        Listing[]
+  claims          Claim[]
+  contactRequests ContactRequest[]
+  reports         Report[]
+
+  @@map("users")
+}
+
+/// Core marketplace and lost & found listing entity.
+/// Type-specific validation rules:
+/// - SALE: `price` must be a positive decimal; `condition` describes item wear; `location` indicates preferred meetup point.
+/// - LOST: `price` is null; `location` indicates last seen location; claimant can submit ownership proof.
+/// - FOUND: `price` is null; `condition` describes retrieved state; `location` indicates recovery spot or safe storage.
+model Listing {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String        @db.Text
+  type        ListingType
+  category    Category
+  condition   Condition?
+  price       Decimal?      @db.Decimal(10, 2)
+  location    String
+  status      ListingStatus @default(ACTIVE)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relationships
+  images          ListingImage[]
+  claims          Claim[]
+  contactRequests ContactRequest[]
+  reports         Report[]
+
+  @@index([userId])
+  @@index([type])
+  @@index([category])
+  @@index([status])
+  @@index([createdAt])
+  @@map("listings")
+}
+
+/// Cloud-stored listing images with public identification.
+model ListingImage {
+  id        String   @id @default(cuid())
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  imageUrl  String
+  publicId  String?
+  createdAt DateTime @default(now())
+
+  @@index([listingId])
+  @@map("listing_images")
+}
+
+/// Ownership claims for LOST or FOUND items.
+/// Contains proof description/questions and verification status.
+model Claim {
+  id         String      @id @default(cuid())
+  listingId  String
+  listing    Listing     @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  claimantId String
+  claimant   User        @relation(fields: [claimantId], references: [id], onDelete: Cascade)
+  proof      String      @db.Text
+  status     ClaimStatus @default(PENDING)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  // Prevent duplicate claims from the same student on the same listing
+  @@unique([listingId, claimantId])
+  @@index([listingId])
+  @@index([claimantId])
+  @@index([status])
+  @@map("claims")
+}
+
+/// Contact detail requests from prospective buyers to listing owners.
+model ContactRequest {
+  id          String        @id @default(cuid())
+  listingId   String
+  listing     Listing       @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  requesterId String
+  requester   User          @relation(fields: [requesterId], references: [id], onDelete: Cascade)
+  status      ContactStatus @default(PENDING)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Prevent duplicate contact requests from the same user for the same listing
+  @@unique([listingId, requesterId])
+  @@index([listingId])
+  @@index([requesterId])
+  @@index([status])
+  @@map("contact_requests")
+}
+
+/// Moderation reports for suspicious, prohibited, or inappropriate listings.
+model Report {
+  id          String       @id @default(cuid())
+  listingId   String
+  listing     Listing      @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  reporterId  String
+  reporter    User         @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  reason      String
+  description String?      @db.Text
+  status      ReportStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Prevent duplicate reports from the same user for the same listing
+  @@unique([listingId, reporterId])
+  @@index([listingId])
+  @@index([reporterId])
+  @@index([status])
+  @@map("reports")
+}

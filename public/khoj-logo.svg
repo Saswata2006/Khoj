@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none">
+  <g transform="translate(0, 4)">
+    <rect width="32" height="32" rx="8" fill="#0F172A"/>
+    <circle cx="15" cy="15" r="8" stroke="#059669" stroke-width="3" stroke-linecap="round"/>
+    <line x1="21" y1="21" x2="27" y2="27" stroke="#059669" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="15" cy="15" r="3" fill="#F8FAFC"/>
+  </g>
+  <text x="42" y="28" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="24" fill="#0F172A" letter-spacing="-0.03em">Khoj</text>
+  <circle cx="106" cy="14" r="3" fill="#059669"/>
+</svg>
