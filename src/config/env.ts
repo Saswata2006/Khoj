@@ -18,6 +18,13 @@ export const envSchema = z.object({
 
   // Better Auth — server-side secrets (never exposed to client)
   BETTER_AUTH_SECRET: z.string().optional(),
+  OTP_HASH_SECRET: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || val.trim().length === 0 || val.trim().length >= 32,
+      { message: "OTP_HASH_SECRET must be at least 32 characters." }
+    ),
   BETTER_AUTH_URL: z.string().url().default("http://localhost:3000"),
 
   // SMTP configuration — server-side only
@@ -52,6 +59,7 @@ export function getEnv(): ValidatedEnv {
     DATABASE_URL: process.env.DATABASE_URL,
     DIRECT_URL: process.env.DIRECT_URL,
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+    OTP_HASH_SECRET: process.env.OTP_HASH_SECRET,
     BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
     SMTP_HOST: process.env.SMTP_HOST,
     SMTP_PORT: process.env.SMTP_PORT,

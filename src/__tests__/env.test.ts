@@ -45,4 +45,17 @@ describe("Environment Validation Schema", () => {
     expect(parsed.DATABASE_URL).toBeDefined();
     expect(parsed.DIRECT_URL).toBeDefined();
   });
+
+  it("should validate OTP_HASH_SECRET minimum length when provided", () => {
+    expect(envSchema.parse({ OTP_HASH_SECRET: "" }).OTP_HASH_SECRET).toBe("");
+    expect(
+      envSchema.parse({
+        OTP_HASH_SECRET: "0123456789abcdef0123456789abcdef",
+      }).OTP_HASH_SECRET
+    ).toBe("0123456789abcdef0123456789abcdef");
+
+    expect(() =>
+      envSchema.parse({ OTP_HASH_SECRET: "short-secret" })
+    ).toThrow();
+  });
 });

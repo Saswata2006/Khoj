@@ -6,6 +6,6 @@ dotenv.config();
 export default defineConfig({
   schema: "prisma/schema.prisma",
   datasource: {
-    url: env("DIRECT_URL") || env("DATABASE_URL"),
+    url: env("DIRECT_URL"),
   },
 });

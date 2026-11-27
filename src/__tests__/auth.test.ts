@@ -82,7 +82,10 @@ vi.mock("better-auth/client/plugins", () => ({
   inferAdditionalFields: vi.fn(() => ({})),
 }));
 
-import { normalizeEmail } from "@/lib/auth";
+import { normalizeEmail, hashOtp } from "@/lib/auth";
+import { createHash } from "crypto";
+import { betterAuth } from "better-auth";
+import { emailOTP } from "better-auth/plugins";
 import {
   sendOtpEmail,
   verifySmtpConnection,
@@ -104,6 +107,10 @@ import {
 } from "@/lib/authorization";
 import { auth } from "@/lib/auth";
 import { sendOtp, verifyOtp } from "@/lib/auth-client";
+
+// Capture module-initialization options before describe blocks call vi.clearAllMocks()
+const capturedEmailOtpOptions = vi.mocked(emailOTP).mock.calls[0]?.[0];
+const capturedAuthOptions = vi.mocked(betterAuth).mock.calls[0]?.[0];
 
 // ---------------------------------------------------------------------------
 // Test fixture helpers
@@ -619,5 +626,87 @@ describe("Generic error responses", () => {
     const result = await verifyOtp("user@example.com", "abc");
     expect(result.success).toBe(false);
     expect(result.error).toBe("Invalid or expired verification code.");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 8. Phase C1 Hardening: Keyed HMAC-SHA256 OTP Hashing & Unused Endpoint Lock
+// ---------------------------------------------------------------------------
+
+describe("Keyed HMAC-SHA256 OTP hashing (OTP_HASH_SECRET)", () => {
+  const originalEnv = { ...process.env };
+
+  afterEach(() => {
+    process.env = { ...originalEnv };
+  });
+
+  it("produces a keyed HMAC-SHA256 base64url digest rather than plaintext or unkeyed SHA-256", async () => {
+    process.env.OTP_HASH_SECRET = "a-dedicated-32-character-minimum-secret-1234";
+    const otp = "482910";
+    const digest = await hashOtp(otp);
+
+    expect(digest).not.toBe(otp);
+    const unkeyedSha256 = createHash("sha256").update(otp).digest("base64url");
+    expect(digest).not.toBe(unkeyedSha256);
+
+    // Deterministic for the same key and OTP
+    expect(await hashOtp(otp)).toBe(digest);
+  });
+
+  it("produces different digests when OTP_HASH_SECRET changes", async () => {
+    process.env.OTP_HASH_SECRET = "secret-one-with-at-least-32-characters-0001";
+    const digestA = await hashOtp("123456");
+
+    process.env.OTP_HASH_SECRET = "secret-two-with-at-least-32-characters-0002";
+    const digestB = await hashOtp("123456");
+
+    expect(digestA).not.toBe(digestB);
+  });
+
+  it("throws in production when OTP_HASH_SECRET is missing or under 32 characters", async () => {
+    (process.env as Record<string, string | undefined>).NODE_ENV = "production";
+    delete process.env.OTP_HASH_SECRET;
+    await expect(hashOtp("123456")).rejects.toThrow("OTP_HASH_SECRET");
+
+    process.env.OTP_HASH_SECRET = "too-short";
+    await expect(hashOtp("123456")).rejects.toThrow("OTP_HASH_SECRET");
+  });
+});
+
+describe("Better Auth hardening configuration", () => {
+  it("configures custom HMAC storeOTP, disables unused OTP endpoints, and disables cookieCache", () => {
+    expect(capturedEmailOtpOptions).toBeDefined();
+    expect(capturedEmailOtpOptions?.otpLength).toBe(6);
+    expect(capturedEmailOtpOptions?.expiresIn).toBe(300);
+    expect(capturedEmailOtpOptions?.allowedAttempts).toBe(3);
+    expect(capturedEmailOtpOptions?.resendStrategy).toBe("rotate");
+    expect(capturedEmailOtpOptions?.storeOTP).toEqual({ hash: hashOtp });
+
+    expect(capturedAuthOptions).toBeDefined();
+    expect(capturedAuthOptions?.emailAndPassword?.enabled).toBe(false);
+    expect(capturedAuthOptions?.session?.cookieCache?.enabled).toBe(false);
+    expect(capturedAuthOptions?.disabledPaths).toContain(
+      "/email-otp/check-verification-otp"
+    );
+    expect(capturedAuthOptions?.disabledPaths).toContain(
+      "/email-otp/verify-email"
+    );
+    expect(capturedAuthOptions?.disabledPaths).toContain("/sign-in/email");
+  });
+
+  it("sets Cache-Control: no-store on /api/auth/[...all] responses", async () => {
+    const { GET, POST } = await import("@/app/api/auth/[...all]/route");
+    vi.mocked(auth.handler).mockResolvedValue(
+      new Response(JSON.stringify({ session: null }), { status: 200 })
+    );
+
+    const getRes = await GET(new Request("http://localhost:3000/api/auth/get-session"));
+    expect(getRes.headers.get("Cache-Control")).toContain("no-store");
+    expect(getRes.headers.get("Pragma")).toBe("no-cache");
+
+    const postRes = await POST(
+      new Request("http://localhost:3000/api/auth/sign-out", { method: "POST" })
+    );
+    expect(postRes.headers.get("Cache-Control")).toContain("no-store");
   });
 });

@@ -12,23 +12,27 @@ export const MAIN_NAV_ITEMS: NavItem[] = [
     title: "Marketplace",
     href: "#marketplace",
     badge: "Coming Soon",
-    description: "Buy and sell second-hand textbooks, electronics, cycles, and student essentials.",
+    description:
+      "Buy and sell pre-owned books, electronics, cycles, and everyday essentials.",
   },
   {
     title: "Lost & Found",
     href: "#lost-and-found",
     badge: "Coming Soon",
-    description: "Report misplaced belongings and submit verified ownership claims.",
+    description:
+      "Report misplaced belongings and submit ownership claims to recover lost items.",
   },
   {
     title: "How It Works",
     href: "#how-it-works",
-    description: "Simple four-step process for verified campus exchanges.",
+    description:
+      "Simple four-step workflow for community exchanges and item recovery.",
   },
   {
-    title: "Campus Security",
+    title: "Trust & Safety",
     href: "#security",
-    description: "Strict college-email verification and anti-scam moderation.",
+    description:
+      "Email-verified accounts, ownership claims, and community reporting.",
   },
 ];
 
@@ -38,7 +42,7 @@ export const FOOTER_NAV_SECTIONS = [
     links: [
       { title: "Marketplace", href: "#marketplace", disabled: true },
       { title: "Lost & Found", href: "#lost-and-found", disabled: true },
-      { title: "Campus Verification", href: "#security", disabled: false },
+      { title: "Trust & Safety", href: "#security", disabled: false },
       { title: "How It Works", href: "#how-it-works", disabled: false },
     ],
   },
@@ -54,8 +58,8 @@ export const FOOTER_NAV_SECTIONS = [
   {
     title: "Community & Trust",
     links: [
-      { title: "Campus Guidelines", href: "#guidelines", disabled: true },
-      { title: "Ownership Claims Guide", href: "#claims", disabled: true },
+      { title: "Community Guidelines", href: "#guidelines", disabled: true },
+      { title: "Ownership Claims", href: "#claims", disabled: true },
       { title: "Safety Tips", href: "#safety", disabled: true },
       { title: "System Health Status", href: "/api/health", disabled: false },
     ],

@@ -2,234 +2,143 @@
 
 > **Find it. Sell it. Reclaim it.**
 
-A modern, production-oriented, campus-exclusive marketplace and lost & found platform built specifically for verified college students.
+A community marketplace to buy and sell pre-owned items, report lost belongings, and reconnect people with what matters.
 
 ---
 
 ## 1. Project Overview
 
-**Khoj** is designed to replace chaotic campus WhatsApp groups, unverified public classifieds, and lost & found bulletin boards with a single secure, campus-gated web platform.
+**Khoj** replaces chaotic group chats and unstructured classifieds with a dedicated marketplace and lost & found web application open to anyone with a valid email address (including local neighborhoods and college campuses).
 
-Enrolled college students can:
-- **Buy and sell** second-hand textbooks, electronics, bicycles, and hostel room essentials directly with peers.
-- **Post lost and found belongings** with precise campus location tags.
-- **Submit and verify ownership claims** before releasing recovered items.
-- **Request seller contact details privately** without broadcasting personal phone numbers.
-- **Report inappropriate or suspicious listings** to campus moderators.
+What users can do as modules roll out:
+- **Sign in passwordlessly (Implemented)** using any valid personal or institutional email via a 6-digit email OTP.
+- **Manage profile & dashboard (Implemented)** with display name, general location, and optional campus/hostel info.
+- **Buy and sell pre-owned items (Planned)** with clear condition grading and local meetup locations.
+- **Report lost & found items and submit ownership claims (Planned)** before recovered belongings are handed over.
+- **Request seller contact details privately (Planned)** instead of broadcasting phone numbers.
+- **Report suspicious activity (Planned)** for administrator review.
 
----
-
-## 2. Problem Statement
-
-Campus exchanges are currently plagued by major operational points of friction:
-1. **WhatsApp & Telegram Chat Chaos**: Listing messages get buried within minutes under hundreds of general messages, spam posts, and unorganized chatter.
-2. **Unverified Strangers & Fraud**: Public classified boards (OLX, Facebook Marketplace) invite outsiders and scammers onto campus grounds without institutional accountability.
-3. **Lost Belongings Abandoned**: Lost calculators, lab kits, cycle keys, and ID cards sit unclaimed in security booths or lost in group chats with no structured recovery workflow.
-4. **Awkward Hostel Lobby Negotiations**: Lack of standardized condition grading, pricing guidelines, and structured contact handshakes leads to student friction.
-
-Khoj solves this by requiring verified college email authentication, standardizing categories and conditions, and providing a private claim-matching workflow.
+> **Trust note:** Email OTP verification confirms control of an email inbox and enables account accountability, **not** personal identity verification or transaction guarantees.
 
 ---
 
-## 3. Architecture
+## 2. Architecture
 
 ```mermaid
 flowchart TD
-    subgraph Client["Client Tier (Mobile-First Web)"]
-        Landing["Branded Landing Page"]
-        Nav["Responsive Layout & Navigation"]
-        UI["shadcn/ui + Tailwind Design Tokens"]
+    subgraph Client["Client Tier (Next.js App Router)"]
+        Landing["Public Landing & Auth UI (/login, /verify)"]
+        ProtectedUI["Protected Workspace (/dashboard, /profile, /admin)"]
+        AuthClient["Better Auth Client (src/lib/auth-client.ts)"]
     end
 
-    subgraph Server["Application Server (Next.js 16 App Router)"]
-        Routes["App Routes (/ & Metadata)"]
+    subgraph Server["Application Server (Next.js 16 + Cache Components)"]
+        AuthAPI["Better Auth Handler (/api/auth/[...all])"]
+        ProfileAPI["Protected Profile API (/api/profile)"]
         HealthAPI["Health Check API (/api/health)"]
-        Config["Centralized Config & Zod Validation"]
+        AuthZ["Server Authorization (src/lib/authorization.ts)"]
+        EmailSvc["Nodemailer STARTTLS Service (src/lib/email.ts)"]
+        RateLimiter["Atomic PostgreSQL Rate Limiter (src/lib/rate-limit.ts)"]
     end
 
-    subgraph DataTier["Data Access Tier (Server-Only)"]
-        PrismaClient["Prisma Client Singleton (src/lib/prisma.ts)"]
-        NeonAdapter["Neon Driver Adapter (@prisma/adapter-neon)"]
+    subgraph Persistence["Neon PostgreSQL (Prisma 7 + @prisma/adapter-neon)"]
+        DB[("users, sessions, accounts, verifications, rate_limits, listings, claims, contact_requests, reports")]
     end
 
-    subgraph Storage["Cloud Persistence (Neon PostgreSQL)"]
-        Pooler["Neon Connection Pooler (DATABASE_URL)"]
-        Direct["Neon Direct DDL Endpoint (DIRECT_URL)"]
-        DB[("PostgreSQL Tables: users, listings, claims...")]
-    end
-
-    Client --> Routes
-    Routes --> Config
-    HealthAPI --> PrismaClient
-    PrismaClient --> NeonAdapter
-    NeonAdapter --> Pooler
-    Pooler --> DB
-    Server -.-> Direct
+    Landing --> AuthClient
+    ProtectedUI --> AuthZ
+    ProtectedUI --> ProfileAPI
+    AuthClient --> AuthAPI
+    AuthAPI --> RateLimiter
+    AuthAPI --> EmailSvc
+    AuthAPI --> DB
+    ProfileAPI --> AuthZ
+    ProfileAPI --> DB
+    HealthAPI --> DB
 ```
 
 ---
 
-## 4. Current Implementation Status (Day 1 Complete)
+## 3. Current Implementation Status (Day 1 + Day 2 Complete)
 
 | Component / Feature | Status | Notes |
 | :--- | :--- | :--- |
-| **Next.js 16 (Turbopack) & React 19** | Implemented ✅ | App Router, partial prefetching, zero prerender errors |
-| **Tailwind CSS v4 & Theme Tokens** | Implemented ✅ | Primary (`#0F172A`), Accent (`#059669`), Background (`#F8FAFC`) |
-| **shadcn/ui Components** | Implemented ✅ | Button, Card, Input, Badge, Separator, Skeleton |
-| **Prisma ORM & Neon Driver Adapter** | Implemented ✅ | `@prisma/adapter-neon` via `@neondatabase/serverless` |
-| **Prisma Client Singleton** | Implemented ✅ | `src/lib/prisma.ts` with `server-only` boundary |
-| **Relational Database Schema** | Implemented ✅ | User, Listing, ListingImage, Claim, ContactRequest, Report |
-| **Initial Database Migration** | Applied ✅ | Named migration `20261126212211_init` applied to Neon DB |
-| **Health Check API (`/api/health`)** | Implemented ✅ | Lightweight `SELECT 1`, HTTP 200/503 sanitized response |
-| **Centralized Config & Validation** | Implemented ✅ | `src/config/site.ts`, `campus.ts`, `env.ts` (Zod validation) |
-| **Categories & Navigation Constants** | Implemented ✅ | 7 campus categories, listing types, conditions, footer nav |
-| **Branded Responsive Landing Page** | Implemented ✅ | Navbar, Hero, Problem, Features, How It Works, Footer |
-| **Unit Testing (Vitest)** | Implemented ✅ | 17 unit tests passing (mocked DB, zero live DB reliance) |
-| **Live Database Connectivity** | Verified ✅ | Real query executed against Neon PostgreSQL (`khoj`) |
-| **Campus Email Auth (Auth.js)** | Planned ⏳ | Scheduled for Day 2 |
-| **Listing CRUD Operations** | Planned ⏳ | Scheduled for Day 3 |
-| **Cloudinary Image Uploads** | Planned ⏳ | Scheduled for Day 3 |
-| **Lost & Found Claims Engine** | Planned ⏳ | Scheduled for Day 4 |
-| **Private Contact Requests** | Planned ⏳ | Scheduled for Day 5 |
-| **Moderation & Flagging** | Planned ⏳ | Scheduled for Day 6 |
-| **Vercel Cloud Deployment** | Planned ⏳ | Scheduled for Day 7 |
+| **Next.js 16 (Turbopack, Cache Components) & React 19** | Implemented | App Router, `<Suspense>` streaming for session routes |
+| **Tailwind CSS v4 & shadcn/ui** | Implemented | Primary (`#0F172A`), Accent (`#059669`), Background (`#F8FAFC`), Surface (`#FFFFFF`) |
+| **Prisma 7 & Neon Driver Adapter** | Implemented | `@prisma/adapter-neon` singleton in `src/lib/prisma.ts` |
+| **Database Schema & Migrations** | Applied | `20261126212211_init` + `20261127110932_add_authentication` |
+| **Better Auth + 6-Digit Email OTP** | Implemented | Passwordless only, 5-min expiry, max 3 attempts, 7-day DB sessions |
+| **PostgreSQL Atomic Rate Limiting** | Implemented | `60s` resend cooldown, `5/hr/email`, `10/hr/IP` send, `20/hr/IP` verify |
+| **Gmail SMTP Transport (STARTTLS 587)** | Implemented | `src/lib/email.ts` (live OTP email delivery not yet verified end-to-end) |
+| **Login (`/login`) & OTP Verify (`/verify`)** | Implemented | 6-box numeric OTP input, paste support, 60s countdown |
+| **Protected `/dashboard`, `/profile`, `/admin`** | Implemented | Server-side session & `ADMIN` role enforcement |
+| **Session-Aware Navbar & Logout** | Implemented | Desktop & mobile navigation with initials and session invalidation |
+| **Profile API (`/api/profile`)** | Implemented | Zod allowlisted `name`, `location`, `hostelBlock` updates |
+| **Health Check API (`/api/health`)** | Implemented | `SELECT 1` connectivity check |
+| **Automated Test Suite (Vitest)** | Implemented | Unit & SSR tests with mocked DB/auth/SMTP (no live email sending) |
+| **Marketplace Listings CRUD & Cloudinary** | Planned | Scheduled for Day 3 |
+| **Lost & Found Claims Workflow** | Planned | Scheduled for Day 4 |
+| **Search, Filters & Contact Requests** | Planned | Scheduled for Day 5 |
+| **Moderation & Suspicious Activity Reports** | Planned | Scheduled for Day 6 |
+| **Production Deployment (Vercel)** | Planned | Scheduled for Day 7 |
+
+---
+
+## 4. Development Limitations & Pending Verification
+
+- **Gmail SMTP (Development Only):** Configured for `smtp.gmail.com` on port `587` (`requireTLS: true`). Automated tests mock Nodemailer and **real OTP email delivery has not been verified end-to-end yet**. Rotate any previously exposed SMTP/Neon credentials before live testing.
+- **OTP Storage Hashing:** `emailOTP` currently uses Better Auth's `storeOTP: "hashed"` (unkeyed SHA-256). See `docs/DAY2_BACKEND_HANDOFF.md` for details.
+- **Migration Risk for Day 1 Data:** Applied migration `20261127110932_add_authentication` drops/recreates `emailVerified` and casts `UserRole`; see `docs/DATABASE.md` before applying to non-empty legacy databases.
 
 ---
 
 ## 5. Technology Stack
 
-- **Framework**: Next.js 16.4.6 (App Router with Turbopack)
-- **Language**: TypeScript 5.9 (Strict mode enabled)
-- **Styling**: Tailwind CSS 4.3 with CSS variables
-- **Component Primitives**: shadcn/ui & Base UI
-- **Database**: PostgreSQL hosted on Neon Serverless
-- **ORM**: Prisma 7.10.1 with `@prisma/config`
-- **Driver Adapter**: `@prisma/adapter-neon` + `@neondatabase/serverless`
-- **Validation**: Zod 4.6
-- **Icons**: Lucide React
-- **Testing**: Vitest 5.1
-- **Package Manager**: npm
+- **Framework:** Next.js 16.4.6 (App Router, Turbopack, Cache Components)
+- **Language:** TypeScript 5 (strict)
+- **Auth:** Better Auth 1.7.28 (`emailOTP` plugin, `prismaAdapter`, `nextCookies`)
+- **Email:** Nodemailer (SMTP port 587 STARTTLS)
+- **Styling:** Tailwind CSS 4 + shadcn/ui + Base UI + Lucide React
+- **Database:** Neon PostgreSQL + Prisma 7.10.1 + `@prisma/adapter-neon`
+- **Validation & Testing:** Zod 4.6, Vitest 5.1
 
 ---
 
-## 6. Local Setup Instructions
+## 6. Local Setup
 
-### Prerequisites
-- Node.js `v20.x` or `v22.x` (Recommended: `v22.14.0+`)
-- npm `v10.x` or `v11.x`
-- Neon PostgreSQL database instance
-
-### 1. Clone & Enter Repository
 ```bash
 git clone https://github.com/Saswata2006/Khoj.git
 cd Khoj
-```
-
-### 2. Install Dependencies
-```bash
 npm install
-```
-
-### 3. Configure Environment Variables
-Copy `.env.example` to `.env`:
-```bash
 cp .env.example .env
 ```
 
-Fill in the required database credentials:
-```dotenv
-NEXT_PUBLIC_APP_NAME="Khoj"
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
+Configure `.env` with your Neon PostgreSQL (`DATABASE_URL`, `DIRECT_URL`), Better Auth (`BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`), and SMTP (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `EMAIL_FROM`) values.
 
-# Neon pooled connection string for runtime queries
-DATABASE_URL="postgresql://user:password@ep-xyz-pooler.region.aws.neon.tech/khoj?sslmode=require"
-
-# Neon direct connection string for schema migrations
-DIRECT_URL="postgresql://user:password@ep-xyz.region.aws.neon.tech/khoj?sslmode=require"
-
-# Optional comma-separated institutional email domains (e.g. iitb.ac.in, bits-pilani.ac.in)
-ALLOWED_EMAIL_DOMAINS=""
-```
-
-### 4. Run Database Migrations & Generate Prisma Client
 ```bash
-npx prisma migrate dev
+npx prisma migrate deploy
 npx prisma generate
-```
-
-### 5. Start Development Server
-```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 7. Development Commands
+## 7. Commands
 
 | Command | Description |
 | :--- | :--- |
-| `npm run dev` | Starts local Next.js development server (Turbopack) |
-| `npm run build` | Builds optimized production bundle |
-| `npm run start` | Starts Next.js production server |
-| `npm run lint` | Runs ESLint analysis |
-| `npm run test` | Runs all Vitest unit tests |
-| `npx tsc --noEmit` | Runs full TypeScript compiler type check |
-| `npx prisma validate` | Validates Prisma schema syntax |
-| `npx prisma migrate dev` | Applies pending migrations to the development database |
-| `npx prisma studio` | Launches local database browser GUI |
+| `npm run dev` | Starts local Next.js dev server |
+| `npm run build` | Builds production bundle |
+| `npm run lint` | Runs ESLint |
+| `npm run test` | Runs Vitest suite |
+| `npx tsc --noEmit` | Runs TypeScript type check |
+| `npx prisma validate` | Validates Prisma schema |
 
 ---
 
-## 8. Health Check API
-
-Khoj provides a non-cached, production health check route:
-
-```http
-GET /api/health
-```
-
-**Success Response (HTTP 200)**:
-```json
-{
-  "status": "ok",
-  "database": "connected"
-}
-```
-
-**Failure Response (HTTP 503)**:
-```json
-{
-  "status": "error",
-  "database": "unavailable"
-}
-```
-
----
-
-## 9. Seven-Day Roadmap
-
-Refer to [docs/ROADMAP.md](file:///Users/Saswata007/Developer/Khoj/docs/ROADMAP.md) for the detailed phase breakdown:
-- **Day 1**: Project Foundation & Database Integration *(Completed)*
-- **Day 2**: Campus Email Authentication & User Profile *(Planned)*
-- **Day 3**: Marketplace Buy & Sell Listings CRUD *(Planned)*
-- **Day 4**: Lost & Found Submissions & Verification *(Planned)*
-- **Day 5**: Search, Filter & Private Contact Requests *(Planned)*
-- **Day 6**: Moderation, Reports & Admin Oversight *(Planned)*
-- **Day 7**: E2E Verification & Cloud Deployment *(Planned)*
-
----
-
-## 10. Documentation Links
+## 8. Documentation
 
 - [System Architecture](file:///Users/Saswata007/Developer/Khoj/docs/ARCHITECTURE.md)
-- [Database Schema & Entity Relationships](file:///Users/Saswata007/Developer/Khoj/docs/DATABASE.md)
-- [Full 7-Day Implementation Roadmap](file:///Users/Saswata007/Developer/Khoj/docs/ROADMAP.md)
-
----
-
-## 11. Security & Community Guidelines
-
-- **No Public Credentials**: Secrets and database connection strings are never exposed in logs, client bundles, or repository files.
-- **Privacy First**: Contact details are shared only upon mutual consent between buyer and seller.
-- **Zero Commission**: Designed by students, for students — completely fee-free.
+- [Database Schema & Migrations](file:///Users/Saswata007/Developer/Khoj/docs/DATABASE.md)
+- [Implementation Roadmap](file:///Users/Saswata007/Developer/Khoj/docs/ROADMAP.md)
+- [Day 2 Backend Handoff](file:///Users/Saswata007/Developer/Khoj/docs/DAY2_BACKEND_HANDOFF.md)
