@@ -6,7 +6,7 @@ describe("Site Configuration", () => {
   it("should have correct branding, name and tagline", () => {
     expect(siteConfig.name).toBe("Khoj");
     expect(siteConfig.tagline).toBe("Find it. Sell it. Reclaim it.");
-    expect(siteConfig.description).toContain("campus-exclusive");
+    expect(siteConfig.description).toContain("marketplace");
   });
 
   it("should include defined navigation items with badges", () => {
@@ -21,16 +21,17 @@ describe("Site Configuration", () => {
   });
 });
 
-describe("Campus Configuration", () => {
+describe("Platform Configuration", () => {
   it("should define configurable hostel blocks without hardcoded campus assumptions", () => {
     expect(campusConfig.hostelBlocks).toBeDefined();
     expect(Array.isArray(campusConfig.hostelBlocks)).toBe(true);
     expect(campusConfig.hostelBlocks.length).toBeGreaterThan(0);
   });
 
-  it("should allow emails correctly based on allowed domains", () => {
-    // When no specific domain is restricted in test env, isEmailDomainAllowed returns true
-    expect(campusConfig.isEmailDomainAllowed("student@college.edu")).toBe(true);
-    expect(campusConfig.isEmailDomainAllowed("invalid-email")).toBe(false);
+  it("should allow all valid emails with no college-domain or hostel-block restriction", () => {
+    expect(campusConfig.verification.requireCollegeEmail).toBe(false);
+    expect(campusConfig.verification.requireHostelBlock).toBe(false);
+    expect(campusConfig.platformName).toBeTruthy();
+    expect(campusConfig.supportEmail).toContain("@");
   });
 });
