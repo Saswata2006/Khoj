@@ -1,31 +1,31 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { MessageSquareOff, UserX, AlertTriangle, HelpCircle } from "lucide-react";
+import { MessageSquareOff, Layers, HelpCircle, PhoneOff } from "lucide-react";
 
 export function ProblemSection() {
   const problems = [
     {
       icon: MessageSquareOff,
-      title: "Chaotic WhatsApp Groups",
+      title: "Chaotic Group Chats",
       description:
-        "Listing messages get drowned in minutes under hundreds of spam posts, academic queries, and unorganized chatter.",
+        "Listings and lost-item alerts get buried in minutes under unrelated messages and unsearchable chat threads.",
     },
     {
-      icon: UserX,
-      title: "Unverified Outside Buyers",
+      icon: Layers,
+      title: "Noisy Public Classifieds",
       description:
-        "Public classified sites invite strangers and fraudsters onto campus grounds without college accountability.",
+        "Generic listing boards lack clear condition grading, structured ownership claims, and organized local categories.",
     },
     {
       icon: HelpCircle,
-      title: "Lost Items Lost Forever",
+      title: "Lost Belongings Unclaimed",
       description:
-        "Misplaced earphones, calculators, and cycle keys end up abandoned at security booths or scattered across random group chats.",
+        "Misplaced calculators, headphones, keys, and bags stay scattered across notice boards with no claim review flow.",
     },
     {
-      icon: AlertTriangle,
-      title: "Awkward Hostel Lobby Bargains",
+      icon: PhoneOff,
+      title: "Exposed Contact Info",
       description:
-        "Lack of standardized pricing, clear item conditions, and structured contact requests leads to friction between peers.",
+        "Posting personal phone numbers in public posts invites spam instead of structured, consent-based contact requests.",
     },
   ];
 
@@ -34,13 +34,15 @@ export function ProblemSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-10">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-accent">
-            The Campus Reality
+            Why Khoj
           </h2>
           <p className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-heading">
-            Why traditional campus selling and lost & found are broken
+            Why local buying, selling, and lost &amp; found feel broken
           </p>
           <p className="mt-3 text-sm text-muted-foreground">
-            Students waste hours scouring unstructured chats and bulletin boards. Khoj solves this with a purpose-built campus directory.
+            Communities waste hours digging through unstructured chats and
+            scattered boards. Khoj brings marketplace listings and item recovery
+            into one organized space.
           </p>
         </div>
 

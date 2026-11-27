@@ -1,4 +1,10 @@
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingBag, Search, ShieldCheck, CheckCircle2 } from "lucide-react";
 
@@ -11,117 +17,158 @@ export function FeaturesSection() {
             Core Modules
           </h2>
           <p className="mt-2 text-3xl font-bold tracking-tight text-foreground font-heading">
-            Tailored specifically for campus dynamics
+            Built for local communities and campuses
           </p>
           <p className="mt-3 text-sm text-muted-foreground">
-            Whether you need to offload course textbooks after semester exams or retrieve a forgotten cycle lock, Khoj keeps every interaction inside your college ecosystem.
+            Whether you are selling pre-owned gear in your neighborhood, trading
+            textbooks on campus, or helping recover a misplaced item, Khoj keeps
+            everything organized.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Feature 1: Marketplace */}
-          <Card id="marketplace" className="relative flex flex-col justify-between border-border bg-card shadow-xs hover:border-slate-400 transition-colors">
+          <Card
+            id="marketplace"
+            className="relative flex flex-col justify-between border-border bg-card shadow-xs hover:border-slate-400 transition-colors"
+          >
             <CardHeader>
               <div className="flex items-center justify-between mb-2">
                 <div className="h-10 w-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center">
                   <ShoppingBag className="h-5 w-5 text-emerald-400" />
                 </div>
-                <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-700 text-xs">
+                <Badge
+                  variant="secondary"
+                  className="bg-emerald-500/10 text-emerald-700 text-xs"
+                >
                   Coming Soon
                 </Badge>
               </div>
               <CardTitle className="text-xl font-bold font-heading">
-                Peer Marketplace
+                Community Marketplace
               </CardTitle>
               <CardDescription className="text-sm">
-                Buy and sell used academic and daily essentials directly with batchmates.
+                Buy and sell pre-owned books, electronics, cycles, and everyday
+                items nearby.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <ul className="space-y-2 text-xs text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>Transparent item condition grading (New, Like New, Good, Fair)</span>
+                  <span>
+                    Clear item condition grading (New, Like New, Good, Fair)
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>Direct contact requests — no public phone number exposure</span>
+                  <span>
+                    Private contact requests &mdash; avoid broadcasting phone numbers
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>Fair student pricing for engineering books, lab coats, and cycles</span>
+                  <span>
+                    Organized categories for local neighborhoods and campus living
+                  </span>
                 </li>
               </ul>
             </CardContent>
           </Card>
 
           {/* Feature 2: Lost & Found */}
-          <Card id="lost-and-found" className="relative flex flex-col justify-between border-border bg-card shadow-xs hover:border-slate-400 transition-colors">
+          <Card
+            id="lost-and-found"
+            className="relative flex flex-col justify-between border-border bg-card shadow-xs hover:border-slate-400 transition-colors"
+          >
             <CardHeader>
               <div className="flex items-center justify-between mb-2">
                 <div className="h-10 w-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center">
                   <Search className="h-5 w-5" />
                 </div>
-                <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-700 text-xs">
+                <Badge
+                  variant="secondary"
+                  className="bg-emerald-500/10 text-emerald-700 text-xs"
+                >
                   Coming Soon
                 </Badge>
               </div>
               <CardTitle className="text-xl font-bold font-heading">
-                Lost & Found Network
+                Lost &amp; Found Registry
               </CardTitle>
               <CardDescription className="text-sm">
-                Centralized registry for lost student belongings with verified claim matching.
+                Structured listings for lost and found belongings with ownership
+                claim reviews.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <ul className="space-y-2 text-xs text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>Proof-of-ownership questions (color, serial digits, unique marks)</span>
+                  <span>
+                    Ownership claims with identifying details before item handover
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>Location tagging to department buildings, libraries & hostels</span>
+                  <span>
+                    Location notes for public venues, transit stops, or campus buildings
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>Claim review workflow prevents wrongful item recovery</span>
+                  <span>
+                    Dedicated LOST and FOUND workflows separated from sales listings
+                  </span>
                 </li>
               </ul>
             </CardContent>
           </Card>
 
-          {/* Feature 3: Verified Campus Community */}
-          <Card id="security" className="relative flex flex-col justify-between border-border bg-card shadow-xs hover:border-slate-400 transition-colors">
+          {/* Feature 3: Trust & Safety */}
+          <Card
+            id="security"
+            className="relative flex flex-col justify-between border-border bg-card shadow-xs hover:border-slate-400 transition-colors"
+          >
             <CardHeader>
               <div className="flex items-center justify-between mb-2">
                 <div className="h-10 w-10 rounded-lg bg-slate-900 text-white flex items-center justify-center">
                   <ShieldCheck className="h-5 w-5 text-emerald-400" />
                 </div>
-                <Badge variant="default" className="bg-primary text-primary-foreground text-xs">
-                  Foundation Active
+                <Badge
+                  variant="default"
+                  className="bg-primary text-primary-foreground text-xs"
+                >
+                  Auth Active
                 </Badge>
               </div>
               <CardTitle className="text-xl font-bold font-heading">
-                Campus Verification
+                Email-Verified Accounts &amp; Reporting
               </CardTitle>
               <CardDescription className="text-sm">
-                Zero anonymous interactions. Every student is verified by institutional email.
+                Passwordless email verification paired with structured reporting
+                and local meetup tools.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <ul className="space-y-2 text-xs text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>Allowed institutional domain gates prevent outside bad actors</span>
+                  <span>
+                    Active now: 6-digit email OTP sign-in for personal or institutional emails
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>Integrated report & moderation system to flag misconduct</span>
+                  <span>
+                    Report suspicious activity and review flagged listings (Coming Soon)
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>Hostel block tagging for convenient nearby pick-ups</span>
+                  <span>
+                    Optional location and campus block profile settings for local meetups
+                  </span>
                 </li>
               </ul>
             </CardContent>

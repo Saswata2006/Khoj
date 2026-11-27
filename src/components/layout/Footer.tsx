@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { FOOTER_NAV_SECTIONS } from "@/constants/navigation";
-import { Search, Heart, Activity } from "lucide-react";
+import { Search, Activity, ArrowUpRight } from "lucide-react";
 
 export function Footer() {
   const currentYear = 2026;
@@ -26,12 +26,12 @@ export function Footer() {
             <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
               {siteConfig.description}
             </p>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-2.5 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 font-medium text-emerald-700 border border-emerald-500/20">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse" />
-                Phase 1 Active
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+                Auth Active
               </span>
-              <span>•</span>
+              <span>&bull;</span>
               <Link
                 href="/api/health"
                 className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
@@ -40,6 +40,16 @@ export function Footer() {
                 <Activity className="h-3 w-3 text-emerald-600" />
                 <span>API Health Check</span>
               </Link>
+              <span>&bull;</span>
+              <a
+                href={siteConfig.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 font-medium text-foreground hover:text-accent transition-colors"
+              >
+                <span>GitHub</span>
+                <ArrowUpRight className="h-3 w-3" />
+              </a>
             </div>
           </div>
 
@@ -55,7 +65,9 @@ export function Footer() {
                     {link.disabled ? (
                       <span className="text-xs text-muted-foreground/70 cursor-not-allowed flex items-center justify-between">
                         <span>{link.title}</span>
-                        <span className="text-[10px] text-muted-foreground/60">(Soon)</span>
+                        <span className="text-[10px] text-muted-foreground/60">
+                          (Soon)
+                        </span>
                       </span>
                     ) : (
                       <Link
@@ -74,11 +86,11 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="mt-12 border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-          <p>© {currentYear} {siteConfig.name}. Built for verified campus communities.</p>
-          <p className="inline-flex items-center gap-1">
-            <span>Crafted for student safety and trust</span>
-            <Heart className="h-3 w-3 text-red-500 fill-red-500" />
+          <p>
+            &copy; {currentYear} {siteConfig.name}. Community marketplace &amp;
+            lost &amp; found for local neighborhoods and campuses.
           </p>
+          <p>Email-verified accounts &bull; Built for local meetups</p>
         </div>
       </div>
     </footer>

@@ -1,16 +1,86 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { siteConfig } from "@/config/site";
 import { MAIN_NAV_ITEMS } from "@/constants/navigation";
+import { getSession, signOut } from "@/lib/auth-client";
+import { computeUserInitials } from "@/lib/auth-ui";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Search, ShieldCheck, Menu, X, ArrowUpRight } from "lucide-react";
+import {
+  Search,
+  Menu,
+  X,
+  LayoutDashboard,
+  User as UserIcon,
+  LogOut,
+  Loader2,
+  Shield,
+} from "lucide-react";
 
-export function Navbar() {
+export interface NavbarUser {
+  id: string;
+  name?: string | null;
+  email: string;
+  role?: string;
+}
+
+interface NavbarProps {
+  initialUser?: NavbarUser | null;
+}
+
+export function Navbar({ initialUser = null }: NavbarProps) {
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<NavbarUser | null>(initialUser);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    getSession()
+      .then((session) => {
+        if (!active) return;
+        if (session?.user) {
+          const roleValue =
+            "role" in session.user && typeof session.user.role === "string"
+              ? session.user.role
+              : undefined;
+          setUser({
+            id: session.user.id,
+            name: session.user.name,
+            email: session.user.email,
+            role: roleValue,
+          });
+        } else if (initialUser === null) {
+          setUser(null);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      active = false;
+    };
+  }, [initialUser]);
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      await signOut();
+      setUser(null);
+      setMobileMenuOpen(false);
+      router.replace("/");
+      router.refresh();
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
+  const initials = user ? computeUserInitials(user.name, user.email) : "";
+  const displayLabel = user?.name?.trim() || user?.email || "";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/80 bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80">
@@ -28,7 +98,7 @@ export function Navbar() {
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
             </div>
             <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-              Campus Exclusive
+              {siteConfig.tagline}
             </span>
           </div>
         </Link>
@@ -54,53 +124,112 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* Actions & Verification Indicator */}
-        <div className="hidden sm:flex items-center gap-2.5">
-          <div className="hidden lg:flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/60 px-2.5 py-1 rounded-full border border-border">
-            <ShieldCheck className="h-3.5 w-3.5 text-accent" />
-            <span>College Email Required</span>
-          </div>
+        {/* Desktop Session-Aware Actions */}
+        <div className="hidden sm:flex items-center gap-2">
+          {user ? (
+            <>
+              <Link
+                href="/dashboard"
+                className={cn(
+                  buttonVariants({ variant: "ghost", size: "sm" }),
+                  "text-xs font-medium inline-flex items-center gap-1.5"
+                )}
+              >
+                <LayoutDashboard className="h-3.5 w-3.5 text-accent" />
+                <span>Dashboard</span>
+              </Link>
 
-          <Button
-            variant="outline"
-            size="sm"
-            disabled
-            className="cursor-not-allowed opacity-70 text-xs"
-            title="Authentication launching on Day 2"
-          >
-            Sign In <span className="text-[10px] text-muted-foreground ml-1">(Coming Soon)</span>
-          </Button>
+              <Link
+                href="/profile"
+                className={cn(
+                  buttonVariants({ variant: "ghost", size: "sm" }),
+                  "text-xs font-medium inline-flex items-center gap-1.5"
+                )}
+              >
+                <UserIcon className="h-3.5 w-3.5" />
+                <span>Profile</span>
+              </Link>
 
-          <a
-            href={siteConfig.githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={cn(
-              buttonVariants({ size: "sm" }),
-              "bg-primary text-primary-foreground hover:bg-primary/90 text-xs shadow-xs inline-flex items-center gap-1"
-            )}
-          >
-            <span>GitHub</span>
-            <ArrowUpRight className="h-3 w-3" />
-          </a>
+              {user.role === "ADMIN" && (
+                <Link
+                  href="/admin"
+                  className={cn(
+                    buttonVariants({ variant: "ghost", size: "sm" }),
+                    "text-xs font-medium inline-flex items-center gap-1"
+                  )}
+                >
+                  <Shield className="h-3.5 w-3.5 text-accent" />
+                  <span>Admin</span>
+                </Link>
+              )}
+
+              <Link
+                href="/profile"
+                title={displayLabel}
+                aria-label={`Signed in as ${displayLabel}`}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold ring-2 ring-accent/30 hover:ring-accent transition-all"
+              >
+                {initials}
+              </Link>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="text-xs inline-flex items-center gap-1.5"
+              >
+                {isLoggingOut ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <LogOut className="h-3.5 w-3.5" />
+                )}
+                <span>Logout</span>
+              </Button>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className={cn(
+                buttonVariants({ variant: "outline", size: "sm" }),
+                "text-xs"
+              )}
+            >
+              Sign In
+            </Link>
+          )}
         </div>
 
         {/* Mobile Menu Toggle Button */}
-        <div className="flex sm:hidden">
+        <div className="flex sm:hidden items-center gap-2">
+          {user && (
+            <Link
+              href="/profile"
+              aria-label={`Signed in as ${displayLabel}`}
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold"
+            >
+              {initials}
+            </Link>
+          )}
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle Navigation Menu"
           >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {mobileMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
           </Button>
         </div>
       </div>
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="sm:hidden border-b border-border bg-card px-4 pt-3 pb-6 shadow-lg animate-in slide-in-from-top-2">
+        <div className="sm:hidden border-b border-border bg-card px-4 pt-3 pb-6 shadow-lg">
           <div className="flex flex-col gap-2">
             {MAIN_NAV_ITEMS.map((item) => (
               <Link
@@ -117,14 +246,90 @@ export function Navbar() {
                 ) : null}
               </Link>
             ))}
-            <div className="mt-4 pt-4 border-t border-border flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground px-3 py-1">
-                <ShieldCheck className="h-4 w-4 text-accent" />
-                <span>Verified College Students Only</span>
-              </div>
-              <Button disabled variant="outline" size="sm" className="w-full text-xs">
-                Sign In (Coming Soon)
-              </Button>
+
+            <div className="mt-3 pt-3 border-t border-border flex flex-col gap-2">
+              {user ? (
+                <>
+                  <div className="flex items-center gap-2.5 px-3 py-1.5">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold">
+                      {initials}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-foreground truncate">
+                        {displayLabel}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground truncate">
+                        {user.email}
+                      </p>
+                    </div>
+                  </div>
+
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "sm" }),
+                      "w-full justify-start text-xs gap-2"
+                    )}
+                  >
+                    <LayoutDashboard className="h-3.5 w-3.5 text-accent" />
+                    <span>Dashboard</span>
+                  </Link>
+
+                  <Link
+                    href="/profile"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "sm" }),
+                      "w-full justify-start text-xs gap-2"
+                    )}
+                  >
+                    <UserIcon className="h-3.5 w-3.5" />
+                    <span>Profile</span>
+                  </Link>
+
+                  {user.role === "ADMIN" && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={cn(
+                        buttonVariants({ variant: "outline", size: "sm" }),
+                        "w-full justify-start text-xs gap-2"
+                      )}
+                    >
+                      <Shield className="h-3.5 w-3.5 text-accent" />
+                      <span>Admin</span>
+                    </Link>
+                  )}
+
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className="w-full justify-start text-xs gap-2"
+                  >
+                    {isLoggingOut ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <LogOut className="h-3.5 w-3.5" />
+                    )}
+                    <span>{isLoggingOut ? "Signing out..." : "Logout"}</span>
+                  </Button>
+                </>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "sm" }),
+                    "w-full text-xs"
+                  )}
+                >
+                  Sign In
+                </Link>
+              )}
             </div>
           </div>
         </div>

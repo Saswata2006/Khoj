@@ -1,21 +1,21 @@
 # Khoj — 7-Day Implementation Roadmap
 
 > **Tagline:** Find it. Sell it. Reclaim it.
-> **Target:** Production-grade campus marketplace and lost & found platform for verified college students.
+> **Scope:** Community marketplace and lost & found platform open to anyone with a valid email address (supporting local neighborhoods and campus communities).
 
 ---
 
-## 📅 Roadmap Overview
+## Roadmap Overview
 
 ```mermaid
 flowchart TD
-    Day1["Day 1: Foundation & DB (Completed ✅)"]
-    Day2["Day 2: Campus Auth & Profile (Next ⏳)"]
-    Day3["Day 3: Marketplace Listings CRUD"]
-    Day4["Day 4: Lost & Found Claims Engine"]
-    Day5["Day 5: Search, Filter & Contact Requests"]
-    Day6["Day 6: Moderation & Anti-Abuse Reports"]
-    Day7["Day 7: E2E Verification & Cloud Deployment"]
+    Day1["Day 1: Foundation & DB (Completed)"]
+    Day2["Day 2: Better Auth OTP, Dashboard & Profile (Completed)"]
+    Day3["Day 3: Marketplace Listings CRUD & Cloudinary (Planned)"]
+    Day4["Day 4: Lost & Found & Ownership Claims (Planned)"]
+    Day5["Day 5: Search, Filters & Contact Requests (Planned)"]
+    Day6["Day 6: Moderation & Suspicious Activity Reports (Planned)"]
+    Day7["Day 7: E2E Verification & Vercel Deployment (Planned)"]
 
     Day1 --> Day2
     Day2 --> Day3
@@ -30,67 +30,49 @@ flowchart TD
 
 ## Daily Schedule & Deliverables
 
-### Day 1: Project Foundation & Database Integration ✅ (COMPLETED)
-- [x] Initialized Next.js 16 (Turbopack) with TypeScript and Tailwind CSS v4.
-- [x] Installed and configured Prisma ORM (v7.10.1) with Neon Serverless driver adapter (`@prisma/adapter-neon`).
-- [x] Implemented development-safe Prisma singleton in `src/lib/prisma.ts` with `server-only` barrier.
-- [x] Designed relational schema supporting `User`, `Listing`, `ListingImage`, `Claim`, `ContactRequest`, and `Report`.
-- [x] Applied initial migration `20261126212211_init` to Neon PostgreSQL.
-- [x] Created `/api/health` monitoring endpoint (SELECT 1 verification).
-- [x] Configured shadcn/ui components (`Button`, `Card`, `Input`, `Badge`, `Separator`, `Skeleton`).
-- [x] Built responsive, mobile-first branded landing page and layouts.
-- [x] Configured Vitest test suite with 17 passing unit tests (mocked DB, 0 DB dependency).
-- [x] Verified zero database secrets exposed in Git or logs.
+### Day 1: Project Foundation & Database Integration (COMPLETED)
+- [x] Initialized Next.js 16 (Turbopack, Cache Components) with TypeScript and Tailwind CSS v4.
+- [x] Configured Prisma ORM (v7.10.1) with `@prisma/adapter-neon` singleton (`src/lib/prisma.ts`).
+- [x] Designed business models (`Listing`, `ListingImage`, `Claim`, `ContactRequest`, `Report`) and applied initial migration `20261126212211_init`.
+- [x] Built `/api/health` (`SELECT 1`) and responsive branded landing page.
 
 ---
 
-### Day 2: Campus Email Authentication & User Profile ⏳ (PLANNED)
-- [ ] Integrate Auth.js (NextAuth v5) with institutional Google/Email magic links.
-- [ ] Enforce allowed college email domain verification (`ALLOWED_EMAIL_DOMAINS`).
-- [ ] Hostels & profile configuration (hostel block, phone/social handle privacy controls).
-- [ ] Role-based access control (Student vs Admin session tokens).
-- [ ] Session-aware navigation states and protected route middleware.
+### Day 2: Public Email OTP Authentication, Dashboard & Profile (COMPLETED)
+- [x] Integrated Better Auth (`1.7.28`) with the `emailOTP` plugin (6-digit OTP, 5-minute expiry, max 3 attempts, `resendStrategy: "rotate"`, `storeOTP: "hashed"`).
+- [x] Configured Nodemailer Gmail SMTP transporter (`port 587`, `requireTLS: true`) — *live OTP delivery pending end-to-end verification after credential rotation*.
+- [x] Implemented persistent atomic PostgreSQL rate limiting (`60s` cooldown, `5/hr/email`, `10/hr/IP` send, `20/hr/IP` verify).
+- [x] Applied migration `20261127110932_add_authentication` (`Session`, `Account`, `Verification`, `RateLimit`, `USER` role default, boolean `emailVerified`, `location`).
+- [x] Implemented `/login` and `/verify` passwordless UI, `/dashboard`, `/profile`, `/api/profile`, protected `/admin`, and session-aware `Navbar`.
+- [x] Rebranded landing page and docs for public community use (retaining campus communities as an optional use case).
 
 ---
 
-### Day 3: Marketplace Buy & Sell Engine ⏳ (PLANNED)
-- [ ] Cloudinary integration for multi-image uploads with server-side validation.
-- [ ] Listing creation form with Zod schema (title, description, category, condition, price, meetup location).
-- [ ] Price validation invariants (positive numeric format, free/exchange option).
-- [ ] Listing detail pages with image gallery and seller hostel block preview.
-- [ ] Listing status state transitions (ACTIVE → SOLD → REMOVED).
+### Day 3: Marketplace Buy & Sell Engine (PLANNED)
+- [ ] Cloudinary integration for multi-image listing uploads with server-side validation.
+- [ ] Listing creation/edit/delete workflows with Zod validation (`SALE` price & condition invariants).
+- [ ] Listing detail pages and status transitions (`ACTIVE` -> `SOLD` -> `REMOVED`).
 
 ---
 
-### Day 4: Lost & Found Submissions & Verification ⏳ (PLANNED)
-- [ ] Dedicated LOST and FOUND item post forms.
-- [ ] Enforced zero-price invariants for lost/found items.
-- [ ] Secret ownership proof questions (e.g., lock code, serial digits, unique scratches).
-- [ ] Ownership claim submission workflow (`Claim` model integration).
-- [ ] Finder dashboard to review, approve, or reject ownership claims.
+### Day 4: Lost & Found & Ownership Claims (PLANNED)
+- [ ] Dedicated `LOST` and `FOUND` listing creation flows (null price invariant).
+- [ ] Ownership claim submission workflow (`Claim` model) and finder review actions (`APPROVED` / `REJECTED`).
 
 ---
 
-### Day 5: Search, Filtering & Contact Handover ⏳ (PLANNED)
-- [ ] Full-text search and category filtering (Books, Electronics, Cycles, Stationery, etc.).
-- [ ] Filter by listing type (SALE, LOST, FOUND) and condition (New, Like New, Good, Fair).
-- [ ] Private Contact Request workflow (prevents student phone number harvesting).
-- [ ] In-app notification triggers when seller accepts contact request.
-- [ ] Designated safe campus meetup locations picker.
+### Day 5: Search, Filtering & Contact Requests (PLANNED)
+- [ ] Search and filters by type (`SALE`, `LOST`, `FOUND`), category, condition, and location.
+- [ ] Private `ContactRequest` handshake between buyers and sellers.
 
 ---
 
-### Day 6: Moderation, Anti-Abuse & Reports ⏳ (PLANNED)
-- [ ] Listing report modal (`Report` model) for inappropriate or fraudulent items.
-- [ ] Admin dashboard to review flagged listings, view reporter comments, and dismiss or remove listings.
-- [ ] Rate limiting on listing creation, claim submissions, and contact requests.
-- [ ] User suspension and moderation log audit trail.
+### Day 6: Moderation & Community Reporting (PLANNED)
+- [ ] Listing report modal (`Report` model) to flag suspicious or inappropriate activity.
+- [ ] Admin moderation queue in `/admin` to review, dismiss, or remove flagged listings.
 
 ---
 
-### Day 7: End-to-End Verification, Performance & Cloud Deployment ⏳ (PLANNED)
-- [ ] Comprehensive E2E test suite (Playwright/Vitest integration flows).
-- [ ] Lighthouse mobile audits (accessibility, performance, SEO, best practices).
-- [ ] Security audit: Content Security Policy, rate-limiting, CORS, and SQL injection barriers.
-- [ ] Production build verification and Vercel cloud deployment.
-- [ ] Production smoke testing and handover documentation.
+### Day 7: E2E Verification & Deployment (PLANNED)
+- [ ] End-to-end authentication & listing verification (including live Gmail SMTP testing).
+- [ ] Security hardening (including keyed HMAC OTP hashing) and Vercel deployment.

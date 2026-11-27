@@ -1,49 +1,53 @@
-import { MailCheck, PlusCircle, Handshake, CheckCircle } from "lucide-react";
+import { MailCheck, PlusCircle, Handshake, MapPin } from "lucide-react";
 
 export function HowItWorksSection() {
   const steps = [
     {
       step: "01",
       icon: MailCheck,
-      title: "Verify Student Email",
+      title: "Verify Your Email",
       description:
-        "Authenticate using your college email address. This ensures you only trade and interact with enrolled peers.",
+        "Sign in using any valid email address with a passwordless 6-digit one-time code.",
     },
     {
       step: "02",
       icon: PlusCircle,
-      title: "Post Item or Claim",
+      title: "Post Item or Report (Soon)",
       description:
-        "List items for sale with clear photos and prices, or report lost/found items with designated campus meetup spots.",
+        "List pre-owned items with clear condition grades, or post lost and found items with local area details.",
     },
     {
       step: "03",
       icon: Handshake,
-      title: "Request or Prove Claim",
+      title: "Claims & Requests (Soon)",
       description:
-        "Buyers request seller details privately. For lost items, submit proof of ownership for the finder to verify.",
+        "Buyers send contact requests privately, while finders review ownership claims before releasing items.",
     },
     {
       step: "04",
-      icon: CheckCircle,
-      title: "Meetup & Complete",
+      icon: MapPin,
+      title: "Local Meetups",
       description:
-        "Meet at convenient campus spots (canteen, library lobby, or hostel gates) for cash or UPI exchange.",
+        "Coordinate a safe, public local or campus meetup to inspect the item and complete the handover.",
     },
   ];
 
   return (
-    <section id="how-it-works" className="py-16 sm:py-20 bg-muted/40 border-t border-border">
+    <section
+      id="how-it-works"
+      className="py-16 sm:py-20 bg-muted/40 border-t border-border"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-accent">
             Simple Process
           </h2>
           <p className="mt-2 text-3xl font-bold tracking-tight text-foreground font-heading">
-            How Khoj works in 4 easy steps
+            How Khoj works in 4 clear steps
           </p>
           <p className="mt-3 text-sm text-muted-foreground">
-            Built from scratch to prioritize student safety, speed, and accountability.
+            Structured around email-verified accounts, transparent listings, and
+            thoughtful local meetups.
           </p>
         </div>
 
@@ -51,7 +55,10 @@ export function HowItWorksSection() {
           {steps.map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.step} className="relative flex flex-col p-6 rounded-xl bg-card border border-border shadow-2xs">
+              <div
+                key={item.step}
+                className="relative flex flex-col p-6 rounded-xl bg-card border border-border shadow-2xs"
+              >
                 <div className="flex items-center justify-between mb-4">
                   <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
                     <Icon className="h-5 w-5 text-accent" />
