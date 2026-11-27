@@ -1,14 +1,13 @@
-import { getEnv } from "./env";
-
 /**
- * Campus configuration.
- * Configurable defaults that do not assume or invent specific institution details.
+ * Platform configuration for Khoj — public community marketplace and lost &
+ * found. No college-domain restrictions. Any valid email can register.
  */
 export const campusConfig = {
-  institutionName: process.env.NEXT_PUBLIC_CAMPUS_NAME || "Campus Community",
-  supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@campus.edu",
+  platformName: process.env.NEXT_PUBLIC_CAMPUS_NAME || "Community",
+  supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@khoj.app",
 
-  // Configurable list of hostel blocks/residences
+  // Optional list of residential areas / hostel blocks shown in the UI.
+  // These are suggestions only; users can enter their own location.
   hostelBlocks: [
     "Block A",
     "Block B",
@@ -23,27 +22,10 @@ export const campusConfig = {
     "Day Scholar",
   ],
 
-  // Verification requirements
+  // Platform is open to all — no email domain restrictions.
   verification: {
-    requireCollegeEmail: true,
+    requireCollegeEmail: false,
     requireHostelBlock: false,
-  },
-
-  /**
-   * Helper to check if an email domain matches allowed campus domains.
-   */
-  isEmailDomainAllowed(email: string): boolean {
-    if (!email || !email.includes("@")) return false;
-    const domain = email.split("@")[1]?.toLowerCase().trim();
-    if (!domain) return false;
-
-    const env = getEnv();
-    const allowed = env.ALLOWED_EMAIL_DOMAINS;
-    if (!allowed || allowed.length === 0) {
-      // In development or if not configured, allow any domain or institutional email
-      return true;
-    }
-    return allowed.some((allowedDomain) => domain === allowedDomain.toLowerCase().trim());
   },
 };
 

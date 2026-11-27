@@ -14,7 +14,7 @@ datasource db {
 // ------------------------------------------------------
 
 enum UserRole {
-  STUDENT
+  USER
   ADMIN
 }
 
@@ -70,26 +70,103 @@ enum ReportStatus {
 // MODELS
 // ------------------------------------------------------
 
-/// User model representing verified campus students and administrators.
-/// Structured to support seamless future Auth.js integration.
+/// User model — merged with Better Auth required fields.
+/// Supports passwordless email OTP authentication.
+/// emailVerified is Boolean (required by Better Auth).
+/// Role changed from STUDENT to USER for public platform.
 model User {
+  /// Better Auth required fields
   id            String    @id @default(cuid())
   name          String?
   email         String    @unique
-  emailVerified DateTime?
+  emailVerified Boolean   @default(false)
   image         String?
-  hostelBlock   String?
-  role          UserRole  @default(STUDENT)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  // Relationships
+  /// Khoj-specific fields
+  hostelBlock   String?
+  location      String?
+  role          UserRole  @default(USER)
+
+  // Better Auth relationships
+  sessions      Session[]
+  accounts      Account[]
+
+  // Business relationships
   listings        Listing[]
   claims          Claim[]
   contactRequests ContactRequest[]
   reports         Report[]
 
   @@map("users")
+}
+
+/// Better Auth: active user sessions (database-backed, not JWT).
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("sessions")
+}
+
+/// Better Auth: linked OAuth / credential accounts per user.
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+/// Better Auth: email OTP and email verification tokens.
+model Verification {
+  id         String    @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([identifier])
+  @@map("verifications")
+}
+
+/// Persistent, concurrency-safe rate-limit counters — serverless/Vercel safe.
+/// Uses atomic PostgreSQL upserts on unique `key` with sliding/hourly timestamps.
+model RateLimit {
+  id            String   @id @default(cuid())
+  key           String   @unique
+  count         Int      @default(0)
+  windowStart   DateTime
+  lastAttemptAt DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([windowStart])
+  @@map("rate_limits")
 }
 
 /// Core marketplace and lost & found listing entity.
@@ -152,7 +229,7 @@ model Claim {
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
 
-  // Prevent duplicate claims from the same student on the same listing
+  // Prevent duplicate claims from the same user on the same listing
   @@unique([listingId, claimantId])
   @@index([listingId])
   @@index([claimantId])
