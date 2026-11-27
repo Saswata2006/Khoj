@@ -13,10 +13,10 @@ A community marketplace to buy and sell pre-owned items, report lost belongings,
 What users can do as modules roll out:
 - **Sign in passwordlessly (Implemented)** using any valid personal or institutional email via a 6-digit email OTP.
 - **Manage profile & dashboard (Implemented)** with display name, general location, and optional campus/hostel info.
-- **Buy and sell pre-owned items (Planned)** with clear condition grading and local meetup locations.
-- **Report lost & found items and submit ownership claims (Planned)** before recovered belongings are handed over.
-- **Request seller contact details privately (Planned)** instead of broadcasting phone numbers.
-- **Report suspicious activity (Planned)** for administrator review.
+- **Buy and sell pre-owned items (Implemented)** with condition grading, Cloudinary signed image uploads, local meetup areas, `/marketplace` browse, `/marketplace/[id]` details, and `/dashboard/listings` owner controls (*live Neon/Cloudinary E2E testing deferred*).
+- **Report lost & found items and submit ownership claims (Planned — Day 4)** before recovered belongings are handed over.
+- **Search/filter UI & private contact requests (Planned — Day 4/5)** instead of broadcasting phone numbers.
+- **Report suspicious activity (Planned — Day 6)** for administrator review.
 
 > **Trust note:** Email OTP verification confirms control of an email inbox and enables account accountability, **not** personal identity verification or transaction guarantees.
 
@@ -27,31 +27,40 @@ What users can do as modules roll out:
 ```mermaid
 flowchart TD
     subgraph Client["Client Tier (Next.js App Router)"]
-        Landing["Public Landing & Auth UI (/login, /verify)"]
-        ProtectedUI["Protected Workspace (/dashboard, /profile, /admin)"]
+        Landing["Public Pages & Marketplace (/marketplace, /marketplace/[id], /login, /verify)"]
+        ProtectedUI["Protected Workspace (/dashboard, /dashboard/listings, /marketplace/create, /marketplace/[id]/edit, /profile, /admin)"]
         AuthClient["Better Auth Client (src/lib/auth-client.ts)"]
     end
 
     subgraph Server["Application Server (Next.js 16 + Cache Components)"]
         AuthAPI["Better Auth Handler (/api/auth/[...all])"]
+        MarketplaceAPI["Marketplace & Image APIs (/api/listings, /api/listings/[id]/images)"]
         ProfileAPI["Protected Profile API (/api/profile)"]
         HealthAPI["Health Check API (/api/health)"]
         AuthZ["Server Authorization (src/lib/authorization.ts)"]
+        ImageSanitizer["Sharp Decoder & Cloudinary Signer (src/lib/image-sanitizer.ts, cloudinary.ts)"]
         EmailSvc["Nodemailer STARTTLS Service (src/lib/email.ts)"]
         RateLimiter["Atomic PostgreSQL Rate Limiter (src/lib/rate-limit.ts)"]
     end
 
-    subgraph Persistence["Neon PostgreSQL (Prisma 7 + @prisma/adapter-neon)"]
-        DB[("users, sessions, accounts, verifications, rate_limits, listings, claims, contact_requests, reports")]
+    subgraph Persistence["External & Data Tier"]
+        DB[("Neon PostgreSQL (users, sessions, verifications, rate_limits, listings, listing_images, claims, contact_requests, reports)")]
+        CDN["Cloudinary CDN (khoj/<env>/listings/*)"]
     end
 
     Landing --> AuthClient
+    Landing --> MarketplaceAPI
     ProtectedUI --> AuthZ
     ProtectedUI --> ProfileAPI
+    ProtectedUI --> MarketplaceAPI
     AuthClient --> AuthAPI
     AuthAPI --> RateLimiter
     AuthAPI --> EmailSvc
     AuthAPI --> DB
+    MarketplaceAPI --> AuthZ
+    MarketplaceAPI --> ImageSanitizer
+    ImageSanitizer --> CDN
+    MarketplaceAPI --> DB
     ProfileAPI --> AuthZ
     ProfileAPI --> DB
     HealthAPI --> DB
@@ -59,36 +68,36 @@ flowchart TD
 
 ---
 
-## 3. Current Implementation Status (Day 1 + Day 2 Complete)
+## 3. Current Implementation Status (Day 1 + Day 2 + Day 3 Code Complete)
 
 | Component / Feature | Status | Notes |
 | :--- | :--- | :--- |
-| **Next.js 16 (Turbopack, Cache Components) & React 19** | Implemented | App Router, `<Suspense>` streaming for session routes |
+| **Next.js 16 (Turbopack, Cache Components) & React 19** | Implemented | App Router, `<Suspense>` streaming, scoped `next/image` Cloudinary `remotePatterns` |
 | **Tailwind CSS v4 & shadcn/ui** | Implemented | Primary (`#0F172A`), Accent (`#059669`), Background (`#F8FAFC`), Surface (`#FFFFFF`) |
-| **Prisma 7 & Neon Driver Adapter** | Implemented | `@prisma/adapter-neon` singleton in `src/lib/prisma.ts` |
+| **Prisma 7 & Neon Driver Adapter** | Implemented | `@prisma/adapter-neon` singleton (`DATABASE_URL` runtime, `DIRECT_URL` CLI) |
 | **Database Schema & Migrations** | Applied | `20261126212211_init` + `20261127110932_add_authentication` |
-| **Better Auth + 6-Digit Email OTP** | Implemented | Passwordless only, 5-min expiry, max 3 attempts, 7-day DB sessions |
+| **Better Auth + 6-Digit Email OTP** | Implemented | Passwordless only, HMAC-SHA256 keyed OTP storage, 5-min expiry, max 3 attempts |
 | **PostgreSQL Atomic Rate Limiting** | Implemented | `60s` resend cooldown, `5/hr/email`, `10/hr/IP` send, `20/hr/IP` verify |
-| **Gmail SMTP Transport (STARTTLS 587)** | Implemented | `src/lib/email.ts` (live OTP email delivery not yet verified end-to-end) |
-| **Login (`/login`) & OTP Verify (`/verify`)** | Implemented | 6-box numeric OTP input, paste support, 60s countdown |
-| **Protected `/dashboard`, `/profile`, `/admin`** | Implemented | Server-side session & `ADMIN` role enforcement |
-| **Session-Aware Navbar & Logout** | Implemented | Desktop & mobile navigation with initials and session invalidation |
-| **Profile API (`/api/profile`)** | Implemented | Zod allowlisted `name`, `location`, `hostelBlock` updates |
-| **Health Check API (`/api/health`)** | Implemented | `SELECT 1` connectivity check |
-| **Automated Test Suite (Vitest)** | Implemented | Unit & SSR tests with mocked DB/auth/SMTP (no live email sending) |
-| **Marketplace Listings CRUD & Cloudinary** | Planned | Scheduled for Day 3 |
-| **Lost & Found Claims Workflow** | Planned | Scheduled for Day 4 |
-| **Search, Filters & Contact Requests** | Planned | Scheduled for Day 5 |
+| **Gmail SMTP Transport (STARTTLS 587)** | Implemented | Live email delivery pending manual verification |
+| **Marketplace CRUD & Listing Services** | Implemented | `SALE`-scoped APIs, `.strict()` Zod schemas, `Serializable` ownership/status guards |
+| **Cloudinary Signed Uploads & Sharp Validation** | Implemented | Signature/dimension/25 MP bomb check, full pixel decode + EXIF strip, `413` bounded stream |
+| **Marketplace UI (`/marketplace`, `/[id]`, `create`, `edit`, `/dashboard/listings`)** | Implemented | Public browse & gallery, owner workspace, soft delete, refresh recovery draft |
+| **Automated Test Suite (Vitest)** | Passing (Mocked) | Mocks Prisma, Better Auth, Nodemailer, and Cloudinary |
+| **Live Neon / Cloudinary / SMTP E2E Testing** | Deferred | Tracked in [Day 3 Testing Checklist](file:///Users/Saswata007/Developer/Khoj/docs/DAY3_TESTING_CHECKLIST.md) |
+| **Lost & Found, Ownership Claims & Filter UI** | Planned | Scheduled for Day 4 |
+| **Buyer-Seller Contact Requests** | Planned | Scheduled for Day 5 |
 | **Moderation & Suspicious Activity Reports** | Planned | Scheduled for Day 6 |
 | **Production Deployment (Vercel)** | Planned | Scheduled for Day 7 |
 
 ---
 
-## 4. Development Limitations & Pending Verification
+## 4. Known Technical Limitations & Deferred Testing
 
-- **Gmail SMTP (Development Only):** Configured for `smtp.gmail.com` on port `587` (`requireTLS: true`). Automated tests mock Nodemailer and **real OTP email delivery has not been verified end-to-end yet**. Rotate any previously exposed SMTP/Neon credentials before live testing.
-- **OTP Storage Hashing:** `emailOTP` currently uses Better Auth's `storeOTP: "hashed"` (unkeyed SHA-256). See `docs/DAY2_BACKEND_HANDOFF.md` for details.
-- **Migration Risk for Day 1 Data:** Applied migration `20261127110932_add_authentication` drops/recreates `emailVerified` and casts `UserRole`; see `docs/DATABASE.md` before applying to non-empty legacy databases.
+- **Live End-to-End Integration Deferred:** Automated tests mock PostgreSQL, Better Auth, SMTP, and Cloudinary. Live OTP email delivery, Neon DB persistence, and real Cloudinary uploads/deletions have **not** been executed yet; follow `docs/DAY3_TESTING_CHECKLIST.md` before launch.
+- **Duplicate Listings & Refresh Recovery:** Client `inFlightRef`, `createdListingId` state, and tab-scoped `sessionStorage` recovery prevent double clicks and single-tab refresh duplicates during partial image upload failures, but durable cross-device/lost-response idempotency requires a future `idempotencyKey` DB column/unique index.
+- **Partial Publishing Visibility:** Because the schema does not have a `DRAFT` status, listings enter `ACTIVE` visibility as soon as `POST /api/listings` succeeds, prior to queued photo upload completion.
+- **Orphan Remote Assets:** Transient Cloudinary destroy errors are logged safely without failing DB updates; periodic reconciliation against `listing_images` is required in operations.
+- **Unapplied Schema Proposals:** `idempotencyKey`, `isNegotiable`, and compound marketplace index are documented as deferred migrations in `docs/DATABASE.md`.
 
 ---
 
@@ -96,8 +105,9 @@ flowchart TD
 
 - **Framework:** Next.js 16.4.6 (App Router, Turbopack, Cache Components)
 - **Language:** TypeScript 5 (strict)
-- **Auth:** Better Auth 1.7.28 (`emailOTP` plugin, `prismaAdapter`, `nextCookies`)
+- **Auth:** Better Auth 1.7.28 (`emailOTP` plugin, HMAC-SHA256 OTP hashing, `prismaAdapter`, `nextCookies`)
 - **Email:** Nodemailer (SMTP port 587 STARTTLS)
+- **Media & Image Processing:** Cloudinary Node.js SDK + `sharp` (via Next.js runtime)
 - **Styling:** Tailwind CSS 4 + shadcn/ui + Base UI + Lucide React
 - **Database:** Neon PostgreSQL + Prisma 7.10.1 + `@prisma/adapter-neon`
 - **Validation & Testing:** Zod 4.6, Vitest 5.1
@@ -142,3 +152,5 @@ npm run dev
 - [Database Schema & Migrations](file:///Users/Saswata007/Developer/Khoj/docs/DATABASE.md)
 - [Implementation Roadmap](file:///Users/Saswata007/Developer/Khoj/docs/ROADMAP.md)
 - [Day 2 Backend Handoff](file:///Users/Saswata007/Developer/Khoj/docs/DAY2_BACKEND_HANDOFF.md)
+- [Day 3 Marketplace Handoff](file:///Users/Saswata007/Developer/Khoj/docs/DAY3_MARKETPLACE_HANDOFF.md)
+- [Day 3 Live Testing Checklist (Deferred)](file:///Users/Saswata007/Developer/Khoj/docs/DAY3_TESTING_CHECKLIST.md)

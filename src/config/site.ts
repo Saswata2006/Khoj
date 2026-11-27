@@ -6,10 +6,10 @@ export const siteConfig = {
   url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
   githubUrl: "https://github.com/Saswata2006/Khoj",
   navItems: [
-    { label: "Marketplace", href: "#marketplace", badge: "Coming Soon" },
-    { label: "Lost & Found", href: "#lost-and-found", badge: "Coming Soon" },
-    { label: "How It Works", href: "#how-it-works" },
-    { label: "Features", href: "#features" },
+    { label: "Marketplace", href: "/marketplace" },
+    { label: "Lost & Found", href: "/#lost-and-found", badge: "Coming Soon" },
+    { label: "How It Works", href: "/#how-it-works" },
+    { label: "Features", href: "/#features" },
   ],
   links: {
     github: "https://github.com/Saswata2006/Khoj",

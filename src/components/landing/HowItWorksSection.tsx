@@ -12,9 +12,9 @@ export function HowItWorksSection() {
     {
       step: "02",
       icon: PlusCircle,
-      title: "Post Item or Report (Soon)",
+      title: "Browse or Post Items",
       description:
-        "List pre-owned items with clear condition grades, or post lost and found items with local area details.",
+        "Browse or post Marketplace items with photos and condition grades (Lost & Found reporting launching next).",
     },
     {
       step: "03",

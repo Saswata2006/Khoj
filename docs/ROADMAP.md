@@ -11,8 +11,8 @@
 flowchart TD
     Day1["Day 1: Foundation & DB (Completed)"]
     Day2["Day 2: Better Auth OTP, Dashboard & Profile (Completed)"]
-    Day3["Day 3: Marketplace Listings CRUD & Cloudinary (Planned)"]
-    Day4["Day 4: Lost & Found & Ownership Claims (Planned)"]
+    Day3["Day 3: Marketplace CRUD, Cloudinary & UI (Implemented; Live Tests Deferred)"]
+    Day4["Day 4: Lost & Found & Ownership Claims (Next)"]
     Day5["Day 5: Search, Filters & Contact Requests (Planned)"]
     Day6["Day 6: Moderation & Suspicious Activity Reports (Planned)"]
     Day7["Day 7: E2E Verification & Vercel Deployment (Planned)"]
@@ -48,16 +48,18 @@ flowchart TD
 
 ---
 
-### Day 3: Marketplace Buy & Sell Engine (PLANNED)
-- [ ] Cloudinary integration for multi-image listing uploads with server-side validation.
-- [ ] Listing creation/edit/delete workflows with Zod validation (`SALE` price & condition invariants).
-- [ ] Listing detail pages and status transitions (`ACTIVE` -> `SOLD` -> `REMOVED`).
+### Day 3: Marketplace Buy & Sell Engine (IMPLEMENTED — Live Integration Deferred)
+- [x] Marketplace REST CRUD APIs & service layer (`SALE`-scoped, `Serializable` ownership & status guards, seller privacy projections).
+- [x] Cloudinary signed upload & deletion pipeline with `sharp` pixel decoding, decompression bomb cap (`25 MP`), metadata stripping, bounded streaming (`3 MiB`), and environment namespace isolation (`khoj/development|preview|production`).
+- [x] Protected Create/Edit UI (`/marketplace/create`, `/marketplace/[id]/edit`), public browse (`/marketplace`), product details (`/marketplace/[id]`), and protected `/dashboard/listings`.
+- [ ] Manual end-to-end verification against live Neon DB & Cloudinary (`docs/DAY3_TESTING_CHECKLIST.md`).
 
 ---
 
-### Day 4: Lost & Found & Ownership Claims (PLANNED)
-- [ ] Dedicated `LOST` and `FOUND` listing creation flows (null price invariant).
+### Day 4: Lost & Found & Ownership Claims + Search Filtering (PLANNED)
+- [ ] Dedicated `LOST` and `FOUND` listing creation flows (null price invariant, isolated from `SALE` marketplace feeds).
 - [ ] Ownership claim submission workflow (`Claim` model) and finder review actions (`APPROVED` / `REJECTED`).
+- [ ] Public `/marketplace` keyword search, category/condition/price filter UI, and sort controls (backing parameters already validated in `listMarketplaceQuerySchema`).
 
 ---
 

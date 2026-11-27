@@ -15,6 +15,7 @@ import {
   Menu,
   X,
   LayoutDashboard,
+  Package,
   User as UserIcon,
   LogOut,
   Loader2,
@@ -137,6 +138,17 @@ export function Navbar({ initialUser = null }: NavbarProps) {
               >
                 <LayoutDashboard className="h-3.5 w-3.5 text-accent" />
                 <span>Dashboard</span>
+              </Link>
+
+              <Link
+                href="/dashboard/listings"
+                className={cn(
+                  buttonVariants({ variant: "ghost", size: "sm" }),
+                  "text-xs font-medium inline-flex items-center gap-1.5"
+                )}
+              >
+                <Package className="h-3.5 w-3.5 text-accent" />
+                <span>My Listings</span>
               </Link>
 
               <Link
@@ -274,6 +286,18 @@ export function Navbar({ initialUser = null }: NavbarProps) {
                   >
                     <LayoutDashboard className="h-3.5 w-3.5 text-accent" />
                     <span>Dashboard</span>
+                  </Link>
+
+                  <Link
+                    href="/dashboard/listings"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "sm" }),
+                      "w-full justify-start text-xs gap-2"
+                    )}
+                  >
+                    <Package className="h-3.5 w-3.5 text-accent" />
+                    <span>My Listings</span>
                   </Link>
 
                   <Link
