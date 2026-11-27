@@ -72,3 +72,9 @@ flowchart TD
 ### 2.4 Data Access Tier (`src/lib/prisma.ts`, `prisma/`)
 - **Server-Only Isolation:** Guarded by `import "server-only"`.
 - **Dual-URL Config:** `DATABASE_URL` (pooled runtime queries) in `src/lib/prisma.ts`; `DIRECT_URL` (CLI migrations) in `prisma.config.ts`.
+
+### 2.5 Marketplace & Cloudinary Pipeline (`src/lib/services/listings.ts`, `src/lib/services/listing-images.ts`, `src/lib/image-sanitizer.ts`, `src/lib/cloudinary.ts`)
+- **Type Separation & Privacy:** Marketplace services enforce `type: "SALE"` (excluding `LOST`/`FOUND`) and project strictly public seller attributes (`id`, `name`, `image`) on browse/detail views.
+- **Transactional Concurrency & Locks:** Mutations run under PostgreSQL `Serializable` isolation (`P2025` conflicts -> `409`; image count persistence retries `P2034` up to 3 attempts outside network I/O). Once `SOLD` or `REMOVED`, listings reject edits (`409`) and disallow new/deleted images (`409`).
+- **Bounded Ingestion & Image Sanitization:** JSON bodies (`<= 64 KiB`) and multipart image uploads (`<= 3 MiB + 64 KiB`) stream via `readBoundedRequestBytes()` (`413` on overshoot), then undergo binary signature validation, `25 MP` pixel-budget caps (`src/lib/validators/image.ts`), and full pixel decode/re-encode without EXIF/XMP/GPS metadata via `sharp` (`src/lib/image-sanitizer.ts`).
+- **Scoped Cloudinary Isolation & Delivery:** Uploads target environment-isolated paths (`khoj/development|preview|production/listings/<listingId>`); remote deletions refuse cross-environment `publicId`s; `next.config.ts` and `isAllowedCloudinaryImageUrl()` restrict `<Image>` delivery to the configured `CLOUDINARY_CLOUD_NAME` and active environment namespace without exposing API secrets to client components.

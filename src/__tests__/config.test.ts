@@ -9,11 +9,12 @@ describe("Site Configuration", () => {
     expect(siteConfig.description).toContain("marketplace");
   });
 
-  it("should include defined navigation items with badges", () => {
+  it("should include defined navigation items with expected live and upcoming badges", () => {
     expect(siteConfig.navItems.length).toBeGreaterThan(0);
     const marketplace = siteConfig.navItems.find((item) => item.label === "Marketplace");
     expect(marketplace).toBeDefined();
-    expect(marketplace?.badge).toBe("Coming Soon");
+    expect(marketplace?.href).toBe("/marketplace");
+    expect("badge" in (marketplace ?? {})).toBe(false);
 
     const lostAndFound = siteConfig.navItems.find((item) => item.label === "Lost & Found");
     expect(lostAndFound).toBeDefined();

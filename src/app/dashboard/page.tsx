@@ -4,10 +4,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   CheckCircle2,
-  Compass,
   HandHelping,
   MessageSquare,
   Package,
+  Plus,
   Search,
   Settings,
   Shield,
@@ -100,6 +100,16 @@ async function DashboardContent() {
 
           <div className="flex flex-wrap items-center gap-2.5">
             <Link
+              href="/marketplace/create"
+              className={cn(
+                buttonVariants({ size: "sm" }),
+                "bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1.5"
+              )}
+            >
+              <Plus className="h-3.5 w-3.5" />
+              <span>Sell an Item</span>
+            </Link>
+            <Link
               href="/profile"
               className={cn(
                 buttonVariants({ variant: "outline", size: "sm" }),
@@ -180,24 +190,34 @@ async function DashboardContent() {
                   variant="secondary"
                   className="bg-emerald-500/10 text-emerald-700 text-[10px]"
                 >
-                  Launching Next
+                  Live
                 </Badge>
               </div>
               <CardDescription>
-                Buy and sell second-hand textbooks, electronics, cycles, and
-                essentials.
+                Browse active listings or sell textbooks, electronics, cycles,
+                and essentials.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex flex-wrap gap-2">
               <Link
-                href="/#marketplace"
+                href="/marketplace"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "sm" }),
-                  "w-full text-xs inline-flex items-center gap-1.5"
+                  "flex-1 text-xs inline-flex items-center justify-center gap-1.5"
                 )}
               >
-                <Compass className="h-3.5 w-3.5" />
-                <span>Explore Marketplace Preview</span>
+                <ShoppingBag className="h-3.5 w-3.5 text-accent" />
+                <span>Browse</span>
+              </Link>
+              <Link
+                href="/marketplace/create"
+                className={cn(
+                  buttonVariants({ size: "sm" }),
+                  "flex-1 bg-primary text-primary-foreground hover:bg-primary/90 text-xs inline-flex items-center justify-center gap-1.5"
+                )}
+              >
+                <Plus className="h-3.5 w-3.5" />
+                <span>Sell Item</span>
               </Link>
             </CardContent>
           </Card>
@@ -251,18 +271,49 @@ async function DashboardContent() {
                 <Badge variant="secondary">{counts.listings}</Badge>
               </div>
               <CardDescription>
-                Items you have posted for sale or reported as lost/found.
+                Items you have posted for sale or reported on Khoj.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-lg border border-dashed border-border bg-muted/40 p-6 text-center space-y-1.5">
+              <div className="rounded-lg border border-dashed border-border bg-muted/40 p-6 text-center space-y-3">
                 <p className="text-sm font-medium text-foreground">
-                  No listings yet
+                  {counts.listings > 0
+                    ? `${counts.listings} ${
+                        counts.listings === 1 ? "listing" : "listings"
+                      } in your account`
+                    : "No listings yet"}
                 </p>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Listing creation opens in the upcoming Marketplace &amp; Lost
-                  &amp; Found release.
+                  {counts.listings > 0
+                    ? "Manage your active, sold, and removed marketplace items from your listings workspace."
+                    : "Post your first second-hand textbook, gadget, cycle, or essential to the Khoj Marketplace."}
                 </p>
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  <Link
+                    href="/dashboard/listings"
+                    className={cn(
+                      buttonVariants({ size: "sm" }),
+                      "bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1.5 text-xs"
+                    )}
+                  >
+                    <Package className="h-3.5 w-3.5" />
+                    <span>Manage My Listings</span>
+                  </Link>
+                  <Link
+                    href="/marketplace/create"
+                    className={cn(
+                      buttonVariants({ variant: "outline", size: "sm" }),
+                      "inline-flex items-center gap-1.5 text-xs bg-card"
+                    )}
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>
+                      {counts.listings > 0
+                        ? "Create Another"
+                        : "Create Listing"}
+                    </span>
+                  </Link>
+                </div>
               </div>
             </CardContent>
           </Card>

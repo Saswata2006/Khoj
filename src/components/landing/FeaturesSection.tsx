@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Card,
   CardHeader,
@@ -6,7 +7,9 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, Search, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ShoppingBag, Search, ShieldCheck, CheckCircle2, ArrowRight } from "lucide-react";
 
 export function FeaturesSection() {
   return (
@@ -39,9 +42,9 @@ export function FeaturesSection() {
                 </div>
                 <Badge
                   variant="secondary"
-                  className="bg-emerald-500/10 text-emerald-700 text-xs"
+                  className="bg-emerald-500/15 text-emerald-700 text-xs"
                 >
-                  Coming Soon
+                  Live Now
                 </Badge>
               </div>
               <CardTitle className="text-xl font-bold font-heading">
@@ -52,7 +55,7 @@ export function FeaturesSection() {
                 items nearby.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-4">
               <ul className="space-y-2 text-xs text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
@@ -63,7 +66,7 @@ export function FeaturesSection() {
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
                   <span>
-                    Private contact requests &mdash; avoid broadcasting phone numbers
+                    Structured contact requests coming soon &mdash; no public phone spam
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
@@ -73,6 +76,28 @@ export function FeaturesSection() {
                   </span>
                 </li>
               </ul>
+
+              <div className="flex flex-wrap gap-2 pt-1">
+                <Link
+                  href="/marketplace"
+                  className={cn(
+                    buttonVariants({ size: "sm" }),
+                    "bg-primary text-primary-foreground hover:bg-primary/90 text-xs inline-flex items-center gap-1.5"
+                  )}
+                >
+                  <span>Browse Marketplace</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+                <Link
+                  href="/marketplace/create"
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "sm" }),
+                    "text-xs"
+                  )}
+                >
+                  Sell an Item
+                </Link>
+              </div>
             </CardContent>
           </Card>
 

@@ -85,12 +85,12 @@ erDiagram
 - **`verifications`**: Stores hashed 6-digit OTP codes with 5-minute `expiresAt` and attempt counters (`identifier` indexed).
 - **`rate_limits`**: Persistent PostgreSQL rate-limit counters keyed by unique `key`, updated atomically via `INSERT ... ON CONFLICT ("key") DO UPDATE`.
 
-### Marketplace & Lost & Found Tables (Schema Ready, CRUD Planned Day 3–6)
-- **`listings`**: Core `SALE`, `LOST`, and `FOUND` entries (`Decimal(10, 2)` for `price`, indexed on `userId`, `type`, `category`, `status`, `createdAt`).
-- **`listing_images`**: Associated images for listings (`onDelete: Cascade`).
-- **`claims`**: Ownership claims for `LOST`/`FOUND` items (`@@unique([listingId, claimantId])`).
-- **`contact_requests`**: Buyer-to-seller contact requests (`@@unique([listingId, requesterId])`).
-- **`reports`**: Community reports for suspicious or inappropriate listings (`@@unique([listingId, reporterId])`).
+### Marketplace & Lost & Found Tables
+- **`listings`**: Core `SALE`, `LOST`, and `FOUND` entries (`Decimal(10, 2)` for `price`, indexed on `userId`, `type`, `category`, `status`, `createdAt`). Day 3 Marketplace CRUD APIs strictly scope to `type = "SALE"`.
+- **`listing_images`**: Associated Cloudinary images (`imageUrl`, server-generated `publicId`, `onDelete: Cascade`), bounded at 5 images per `ACTIVE` marketplace listing.
+- **`claims`**: Ownership claims for `LOST`/`FOUND` items (`@@unique([listingId, claimantId])`) — CRUD planned for Day 4.
+- **`contact_requests`**: Buyer-to-seller contact requests (`@@unique([listingId, requesterId])`) — planned for Day 5.
+- **`reports`**: Community reports for suspicious or inappropriate listings (`@@unique([listingId, reporterId])`) — planned for Day 6.
 
 ---
 
@@ -99,6 +99,17 @@ erDiagram
 - **Applied Migrations:**
   1. `prisma/migrations/20261126212211_init/migration.sql` — Day 1 business tables (`users`, `listings`, `listing_images`, `claims`, `contact_requests`, `reports`).
   2. `prisma/migrations/20261127110932_add_authentication/migration.sql` — Adds `sessions`, `accounts`, `verifications`, `rate_limits`, adds `users.location`, switches `UserRole` from `STUDENT` to `USER`, and changes `users.emailVerified` to `BOOLEAN NOT NULL DEFAULT false`.
+- **Deferred Additive Migrations (Post-Day 3 / Future Review):**
+  - Proposed additive changes not yet applied to `prisma/schema.prisma`:
+    ```sql
+    -- 1. Durable server-side duplicate listing prevention across refreshes/retries
+    ALTER TABLE "listings" ADD COLUMN "idempotencyKey" TEXT;
+    CREATE UNIQUE INDEX "listings_userId_idempotencyKey_key" ON "listings"("userId", "idempotencyKey");
+
+    -- 2. Optional negotiable pricing flag & composite marketplace feed index
+    ALTER TABLE "listings" ADD COLUMN "isNegotiable" BOOLEAN NOT NULL DEFAULT false;
+    CREATE INDEX "listings_type_status_createdAt_idx" ON "listings"("type", "status", "createdAt");
+    ```
 - **Migration Risks for Existing Databases:**
   - `20261127110932_add_authentication` runs `DROP COLUMN "emailVerified"` and `ADD COLUMN "emailVerified" BOOLEAN NOT NULL DEFAULT false`, which resets existing verification timestamps to `false` if run against populated Day 1 tables.
   - Converting `UserRole` casts `"role"::text::"UserRole_new"`, which fails if existing rows still hold `'STUDENT'` without first mapping `'STUDENT'` -> `'USER'`.

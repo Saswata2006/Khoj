@@ -55,16 +55,16 @@ export function HeroSection() {
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
 
-          <a
-            href="#marketplace"
+          <Link
+            href="/marketplace"
             className={cn(
               buttonVariants({ variant: "outline", size: "lg" }),
               "w-full sm:w-auto border-border text-foreground text-sm font-semibold h-11 px-6"
             )}
           >
             <ShoppingBag className="mr-2 h-4 w-4 text-accent" />
-            <span>Explore Modules</span>
-          </a>
+            <span>Browse Marketplace</span>
+          </Link>
         </div>
 
         {/* Secondary anchor */}
@@ -96,7 +96,7 @@ export function HeroSection() {
               <span>Community Marketplace</span>
             </div>
             <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-              Buy and sell pre-owned essentials directly with zero listing fees (Coming Soon)
+              Browse and list pre-owned essentials directly with email-verified accounts
             </p>
           </div>
 
