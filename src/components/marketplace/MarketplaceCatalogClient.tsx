@@ -13,6 +13,9 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import {
+  CATEGORY_LIST,
+} from "@/constants/categories";
+import {
   applyMarketplaceFilterPatch,
   buildMarketplaceHref,
   clearAllMarketplaceFilters,
@@ -146,34 +149,75 @@ export function MarketplaceCatalogClient({
 
   return (
     <div className="space-y-6">
-      {/* Keyword Search Bar */}
-      <section aria-label="Search marketplace">
+      {/* Keyword Search & Instant Category Navigation Strip */}
+      <section aria-label="Search marketplace" className="space-y-3">
         <MarketplaceSearchBar
           appliedQ={appliedState.q}
           appliedKey={appliedQueryString}
           isPending={isPending}
           onSearchApply={handleSearchApply}
         />
+
+        <div
+          aria-label="Quick category filters"
+          className="flex items-center gap-1.5 overflow-x-auto pb-1"
+        >
+          <button
+            type="button"
+            disabled={isPending}
+            aria-pressed={appliedState.category === ""}
+            onClick={() => handleApplyPatch({ category: "" })}
+            className={cn(
+              "shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981]",
+              appliedState.category === ""
+                ? "border-[#10B981]/40 bg-[#10B981]/15 text-[#34D399]"
+                : "border-[#27272A] bg-[#111113] text-[#A1A1AA] hover:border-[#3F3F46] hover:text-[#FAFAFA]"
+            )}
+          >
+            All Categories
+          </button>
+
+          {CATEGORY_LIST.map((cat) => {
+            const isSelected = appliedState.category === cat.value;
+            return (
+              <button
+                key={cat.value}
+                type="button"
+                disabled={isPending}
+                aria-pressed={isSelected}
+                onClick={() => handleApplyPatch({ category: cat.value })}
+                className={cn(
+                  "shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981]",
+                  isSelected
+                    ? "border-[#10B981]/40 bg-[#10B981]/15 text-[#34D399]"
+                    : "border-[#27272A] bg-[#111113] text-[#A1A1AA] hover:border-[#3F3F46] hover:text-[#FAFAFA]"
+                )}
+              >
+                {cat.label}
+              </button>
+            );
+          })}
+        </div>
       </section>
 
       {/* Query Parameter Sanitization Notice (malformed/unknown/inverted URL params) */}
       {queryWarnings.length > 0 && (
         <div
           role="status"
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs text-amber-950 dark:text-amber-200"
+          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-[#F59E0B]/30 bg-[#F59E0B]/10 px-4 py-3 text-xs text-[#FCD34D]"
         >
           <div className="flex items-start gap-2">
-            <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-amber-600" aria-hidden="true" />
+            <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-[#F59E0B]" aria-hidden="true" />
             <div className="space-y-0.5">
-              <p className="font-semibold">Some invalid URL parameters were ignored</p>
-              <p className="opacity-90">{queryWarnings.join(" ")}</p>
+              <p className="font-semibold text-[#FAFAFA]">Some invalid URL parameters were ignored</p>
+              <p className="text-[#FDE68A]/90">{queryWarnings.join(" ")}</p>
             </div>
           </div>
           <Link
             href={buildMarketplaceHref(appliedState)}
             className={cn(
               buttonVariants({ variant: "outline", size: "xs" }),
-              "shrink-0 bg-background text-foreground"
+              "shrink-0"
             )}
           >
             Clean URL
@@ -183,23 +227,23 @@ export function MarketplaceCatalogClient({
 
       {/* Desktop Left Sidebar + Responsive Results Workspace */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[270px_minmax(0,1fr)] lg:items-start">
-        {/* Desktop Filter Sidebar */}
+        {/* Sticky Desktop Filter Sidebar */}
         <aside
           aria-label="Desktop marketplace filters"
-          className="hidden lg:block rounded-xl border border-border bg-card p-5 shadow-2xs"
+          className="hidden lg:block lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto rounded-2xl border border-[#27272A] bg-[#111113] p-5 surface-specular"
         >
           <div className="mb-4 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <SlidersHorizontal
-                className="h-4 w-4 text-accent"
+                className="h-4 w-4 text-[#10B981]"
                 aria-hidden="true"
               />
-              <h2 className="font-heading text-sm font-bold text-foreground">
+              <h2 className="font-heading text-sm font-semibold text-[#FAFAFA]">
                 Filters
               </h2>
             </div>
             {panelFilterCount > 0 && (
-              <Badge variant="secondary" className="text-[11px] font-semibold">
+              <Badge variant="accent" className="text-[11px] font-semibold">
                 {panelFilterCount} active
               </Badge>
             )}
@@ -218,7 +262,7 @@ export function MarketplaceCatalogClient({
         {/* Results Column */}
         <div className="min-w-0 space-y-5">
           {/* Toolbar: Results Count + Mobile Filter Sheet Trigger + Sorting */}
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3 shadow-2xs">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#27272A] bg-[#111113] px-4 py-3">
             <div className="flex flex-wrap items-center gap-2.5">
               {/* Mobile Filter Sheet Trigger */}
               <div className="lg:hidden">
@@ -231,15 +275,12 @@ export function MarketplaceCatalogClient({
                     )}
                   >
                     <SlidersHorizontal
-                      className="h-3.5 w-3.5 text-accent"
+                      className="h-3.5 w-3.5 text-[#10B981]"
                       aria-hidden="true"
                     />
                     <span>Filters</span>
                     {panelFilterCount > 0 && (
-                      <Badge
-                        variant="default"
-                        className="ml-0.5 h-4 px-1.5 text-[10px] bg-primary text-primary-foreground"
-                      >
+                      <Badge variant="accent" className="ml-0.5 h-4 px-1.5 text-[10px]">
                         {panelFilterCount}
                       </Badge>
                     )}
@@ -268,7 +309,7 @@ export function MarketplaceCatalogClient({
                 </Sheet>
               </div>
 
-              <p className="text-xs sm:text-sm font-medium text-muted-foreground">
+              <p className="text-xs sm:text-sm font-medium text-[#A1A1AA]">
                 {resultsRangeSummary ?? "Marketplace catalog"}
               </p>
             </div>
@@ -292,20 +333,20 @@ export function MarketplaceCatalogClient({
           {loadError && (
             <div
               role="alert"
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border border-destructive/30 bg-destructive/10 p-6 text-sm text-destructive"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border border-[#EF4444]/30 bg-[#EF4444]/10 p-6 text-sm text-[#FCA5A5]"
             >
               <div className="flex items-start gap-2.5">
-                <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" aria-hidden="true" />
+                <AlertCircle className="h-5 w-5 shrink-0 mt-0.5 text-[#EF4444]" aria-hidden="true" />
                 <div className="space-y-1">
-                  <p className="font-semibold">Failed to load listings</p>
-                  <p className="text-xs opacity-90">{loadError}</p>
+                  <p className="font-semibold text-[#FAFAFA]">Failed to load listings</p>
+                  <p className="text-xs text-[#FCA5A5]">{loadError}</p>
                 </div>
               </div>
               <Link
                 href={buildMarketplaceHref(appliedState)}
                 className={cn(
                   buttonVariants({ variant: "outline", size: "sm" }),
-                  "shrink-0 bg-background text-foreground"
+                  "shrink-0"
                 )}
               >
                 Try Again
@@ -328,15 +369,15 @@ export function MarketplaceCatalogClient({
 
           {/* Out-of-Range Page State (valid filters exist, page exceeds totalPages) */}
           {!isPending && isOutOfRangePage && pagination && (
-            <section className="rounded-xl border border-dashed border-border bg-card p-10 text-center space-y-4">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
+            <section className="rounded-xl border border-dashed border-[#27272A] bg-[#111113] p-10 text-center space-y-4">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-[#27272A] bg-[#18181B] text-[#A1A1AA]">
                 <ShoppingBag className="h-6 w-6" aria-hidden="true" />
               </div>
               <div className="space-y-1.5 max-w-md mx-auto">
-                <h2 className="font-heading text-lg font-semibold text-foreground">
+                <h2 className="font-heading text-lg font-semibold text-[#FAFAFA]">
                   No listings on this page
                 </h2>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-[#A1A1AA]">
                   Page {appliedState.page} exceeds the {pagination.totalPages}{" "}
                   available{" "}
                   {pagination.totalPages === 1 ? "page" : "pages"} for the
@@ -356,7 +397,7 @@ export function MarketplaceCatalogClient({
                       ...appliedState,
                       page: pagination.totalPages,
                     })}
-                    className={buttonVariants({ size: "sm" })}
+                    className={buttonVariants({ variant: "accent", size: "sm" })}
                   >
                     Go to Page {pagination.totalPages}
                   </Link>
@@ -372,15 +413,15 @@ export function MarketplaceCatalogClient({
             listings.length === 0 &&
             pagination.total === 0 &&
             hasActiveFacetFilters && (
-              <section className="rounded-xl border border-dashed border-border bg-card p-10 text-center space-y-4">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
+              <section className="rounded-xl border border-dashed border-[#27272A] bg-[#111113] p-10 text-center space-y-4">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-[#27272A] bg-[#18181B] text-[#A1A1AA]">
                   <SearchX className="h-6 w-6" aria-hidden="true" />
                 </div>
                 <div className="space-y-1.5 max-w-md mx-auto">
-                  <h2 className="font-heading text-lg font-semibold text-foreground">
+                  <h2 className="font-heading text-lg font-semibold text-[#FAFAFA]">
                     No matching listings found
                   </h2>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-[#A1A1AA]">
                     Try adjusting your search keywords, widening your price
                     range, or clearing one or more active filters.
                   </p>
@@ -399,8 +440,8 @@ export function MarketplaceCatalogClient({
                   <Link
                     href="/marketplace/create"
                     className={cn(
-                      buttonVariants({ size: "sm" }),
-                      "bg-primary text-primary-foreground inline-flex items-center gap-1.5"
+                      buttonVariants({ variant: "accent", size: "sm" }),
+                      "inline-flex items-center gap-1.5"
                     )}
                   >
                     <Plus className="h-4 w-4" aria-hidden="true" />
@@ -417,15 +458,15 @@ export function MarketplaceCatalogClient({
             listings.length === 0 &&
             pagination.total === 0 &&
             !hasActiveFacetFilters && (
-              <section className="rounded-xl border border-dashed border-border bg-card p-10 text-center space-y-4">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
+              <section className="rounded-xl border border-dashed border-[#27272A] bg-[#111113] p-10 text-center space-y-4">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-[#27272A] bg-[#18181B] text-[#A1A1AA]">
                   <ShoppingBag className="h-6 w-6" aria-hidden="true" />
                 </div>
                 <div className="space-y-1.5 max-w-md mx-auto">
-                  <h2 className="font-heading text-lg font-semibold text-foreground">
+                  <h2 className="font-heading text-lg font-semibold text-[#FAFAFA]">
                     No active listings yet
                   </h2>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-[#A1A1AA]">
                     Be the first member to post a textbook, gadget, cycle, or
                     essential for sale.
                   </p>
@@ -444,8 +485,8 @@ export function MarketplaceCatalogClient({
                   <Link
                     href="/marketplace/create"
                     className={cn(
-                      buttonVariants({ size: "sm" }),
-                      "bg-primary text-primary-foreground inline-flex items-center gap-1.5"
+                      buttonVariants({ variant: "accent", size: "sm" }),
+                      "inline-flex items-center gap-1.5"
                     )}
                   >
                     <Plus className="h-4 w-4" aria-hidden="true" />

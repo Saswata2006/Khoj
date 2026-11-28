@@ -1,71 +1,69 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { MessageSquareOff, Layers, HelpCircle, PhoneOff } from "lucide-react";
+import { MessageSquareOff, Search, ShieldCheck } from "lucide-react";
+
+const CONTRASTS = [
+  {
+    icon: MessageSquareOff,
+    code: "01",
+    title: "Built to replace buried chat threads",
+    description:
+      "Listings in chat groups sink under unrelated chatter within hours. Khoj keeps every available item searchable by category, price, and condition.",
+  },
+  {
+    icon: Search,
+    code: "02",
+    title: "Transparent availability & condition",
+    description:
+      "Sold items lock cleanly instead of staying vague, and fixed INR pricing sets clear expectations before anyone steps out to meet.",
+  },
+  {
+    icon: ShieldCheck,
+    code: "03",
+    title: "Privacy-conscious account access",
+    description:
+      "Passwordless email OTP confirms inbox ownership while keeping public listing views limited to initials, display name, and general area.",
+  },
+];
 
 export function ProblemSection() {
-  const problems = [
-    {
-      icon: MessageSquareOff,
-      title: "Chaotic Group Chats",
-      description:
-        "Listings and lost-item alerts get buried in minutes under unrelated messages and unsearchable chat threads.",
-    },
-    {
-      icon: Layers,
-      title: "Noisy Public Classifieds",
-      description:
-        "Generic listing boards lack clear condition grading, structured ownership claims, and organized local categories.",
-    },
-    {
-      icon: HelpCircle,
-      title: "Lost Belongings Unclaimed",
-      description:
-        "Misplaced calculators, headphones, keys, and bags stay scattered across notice boards with no claim review flow.",
-    },
-    {
-      icon: PhoneOff,
-      title: "Exposed Contact Info",
-      description:
-        "Posting personal phone numbers in public posts invites spam instead of structured, consent-based contact requests.",
-    },
-  ];
-
   return (
-    <section className="py-14 sm:py-18 bg-muted/30 border-y border-border">
+    <section className="border-b border-[#27272A] bg-[#09090B] py-16 sm:py-22">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-accent">
+        <div className="max-w-2xl space-y-2.5">
+          <p className="font-mono text-xs uppercase tracking-widest text-[#10B981]">
             Why Khoj
-          </h2>
-          <p className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-heading">
-            Why local buying, selling, and lost &amp; found feel broken
           </p>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Communities waste hours digging through unstructured chats and
-            scattered boards. Khoj brings marketplace listings and item recovery
-            into one organized space.
+          <h2 className="font-heading text-section-heading text-[#FAFAFA]">
+            Structured community trade without group-chat clutter.
+          </h2>
+          <p className="text-sm leading-relaxed text-[#A1A1AA] sm:text-base">
+            Clear item metadata, honest availability states, and practical
+            privacy defaults designed for everyday handovers.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {problems.map((prob) => {
-            const Icon = prob.icon;
+        <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
+          {CONTRASTS.map((item) => {
+            const Icon = item.icon;
             return (
-              <Card
-                key={prob.title}
-                className="bg-card border-border shadow-2xs hover:shadow-xs transition-shadow"
+              <div
+                key={item.code}
+                className="rounded-2xl border border-[#27272A] bg-[#111113] p-6 surface-specular transition-colors hover:border-[#3F3F46]"
               >
-                <CardContent className="pt-6">
-                  <div className="h-10 w-10 rounded-lg bg-red-500/10 text-red-600 flex items-center justify-center mb-4">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <h3 className="font-heading font-semibold text-base text-foreground mb-1.5">
-                    {prob.title}
-                  </h3>
-                  <p className="text-xs leading-relaxed text-muted-foreground">
-                    {prob.description}
-                  </p>
-                </CardContent>
-              </Card>
+                <div className="flex items-center justify-between">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#27272A] bg-[#18181B] text-[#34D399]">
+                    <Icon className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                  <span className="font-mono text-xs text-[#71717A]">
+                    {item.code}
+                  </span>
+                </div>
+                <h3 className="mt-5 font-heading text-base font-semibold text-[#FAFAFA]">
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-[#A1A1AA]">
+                  {item.description}
+                </p>
+              </div>
             );
           })}
         </div>

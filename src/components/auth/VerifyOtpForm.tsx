@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   CheckCircle2,
+  KeyRound,
   Loader2,
   Mail,
   RefreshCw,
@@ -22,6 +23,7 @@ import {
   savePendingVerification,
 } from "@/lib/auth-ui";
 import { OtpInput } from "@/components/auth/OtpInput";
+import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -41,7 +43,6 @@ const getServerFalseSnapshot = () => false;
 const getPendingEmailSnapshot = () => loadPendingVerification().email;
 const getPendingCooldownSnapshot = () => loadPendingVerification().cooldownUntilMs;
 const getServerNullSnapshot = () => null;
-
 const getPendingRedirectSnapshot = () => loadPendingVerification().redirectTo;
 
 export function VerifyOtpForm() {
@@ -68,7 +69,9 @@ export function VerifyOtpForm() {
   );
 
   const [digits, setDigits] = useState<string[]>(createEmptyOtpDigits);
-  const [overrideCooldownUntil, setOverrideCooldownUntil] = useState<number | null>(null);
+  const [overrideCooldownUntil, setOverrideCooldownUntil] = useState<number | null>(
+    null
+  );
   const [nowMs, setNowMs] = useState<number | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
@@ -81,7 +84,10 @@ export function VerifyOtpForm() {
   const activeCooldownUntil = overrideCooldownUntil ?? storedCooldownUntil;
   const countdown =
     isHydrated && activeCooldownUntil !== null
-      ? getRemainingCooldownSeconds(activeCooldownUntil, nowMs ?? activeCooldownUntil - 60_000)
+      ? getRemainingCooldownSeconds(
+          activeCooldownUntil,
+          nowMs ?? activeCooldownUntil - 60_000
+        )
       : 0;
 
   useEffect(() => {
@@ -147,7 +153,8 @@ export function VerifyOtpForm() {
       const result = await sendOtp(email);
       if (!result.success) {
         setError(
-          result.error ?? "Unable to resend code right now. Please wait and try again."
+          result.error ??
+            "Unable to resend code right now. Please wait and try again."
         );
         return;
       }
@@ -170,7 +177,7 @@ export function VerifyOtpForm() {
 
   if (isInitializing) {
     return (
-      <Card className="shadow-sm border-border bg-card py-6">
+      <Card className="border-[#27272A] bg-[#111113] shadow-xl py-6">
         <CardHeader className="px-6 space-y-2">
           <Skeleton className="h-6 w-44" />
           <Skeleton className="h-4 w-64" />
@@ -189,12 +196,12 @@ export function VerifyOtpForm() {
 
   if (!email) {
     return (
-      <Card className="shadow-sm border-border bg-card py-6">
+      <Card className="border-[#27272A] bg-[#111113] shadow-xl py-6">
         <CardHeader className="px-6 space-y-2">
-          <CardTitle className="text-xl font-bold text-foreground">
+          <CardTitle className="font-heading text-xl font-semibold text-[#FAFAFA]">
             Verification session missing
           </CardTitle>
-          <CardDescription className="text-sm text-muted-foreground leading-relaxed">
+          <CardDescription className="text-sm text-[#A1A1AA] leading-relaxed">
             Enter your email address first to receive a 6-digit verification
             code.
           </CardDescription>
@@ -203,8 +210,8 @@ export function VerifyOtpForm() {
           <Link
             href="/login"
             className={cn(
-              buttonVariants({ size: "lg" }),
-              "w-full h-10 bg-primary text-primary-foreground hover:bg-primary/90"
+              buttonVariants({ variant: "accent", size: "lg" }),
+              "w-full h-10"
             )}
           >
             Go to Sign In
@@ -219,21 +226,27 @@ export function VerifyOtpForm() {
       <div>
         <Link
           href="/login"
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-[#A1A1AA] hover:text-[#FAFAFA] transition-colors"
         >
-          <ArrowLeft className="h-3.5 w-3.5" />
+          <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
           <span>Back to sign in</span>
         </Link>
       </div>
 
-      <Card className="shadow-sm border-border bg-card py-6">
-        <CardHeader className="px-6 space-y-2">
-          <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
+      <Card className="border-[#27272A] bg-[#111113] shadow-xl py-6">
+        <CardHeader className="px-6 space-y-2.5">
+          <Badge variant="accent" className="gap-1.5">
+            <KeyRound className="h-3 w-3" aria-hidden="true" />
+            <span>Email Verification</span>
+          </Badge>
+          <CardTitle className="font-heading text-2xl font-semibold tracking-tight text-[#FAFAFA]">
             Check your email
           </CardTitle>
-          <CardDescription className="text-sm text-muted-foreground leading-relaxed">
+          <CardDescription className="text-sm text-[#A1A1AA] leading-relaxed">
             Enter the 6-digit code sent to{" "}
-            <span className="font-medium text-foreground break-all">{email}</span>
+            <span className="font-mono font-medium text-[#FAFAFA] break-all">
+              {email}
+            </span>
             . It expires in 5 minutes.
           </CardDescription>
           <div>
@@ -241,9 +254,9 @@ export function VerifyOtpForm() {
               type="button"
               onClick={handleChangeEmail}
               disabled={isVerifying || isSuccess}
-              className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline disabled:opacity-50"
+              className="inline-flex items-center gap-1 text-xs font-medium text-[#34D399] hover:underline disabled:opacity-50"
             >
-              <Mail className="h-3 w-3" />
+              <Mail className="h-3 w-3" aria-hidden="true" />
               <span>Change email</span>
             </button>
           </div>
@@ -265,7 +278,7 @@ export function VerifyOtpForm() {
             {error && (
               <div
                 role="alert"
-                className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive"
+                className="rounded-lg border border-[#EF4444]/30 bg-[#EF4444]/10 px-3 py-2 text-xs font-medium text-[#FCA5A5]"
               >
                 {error}
               </div>
@@ -274,27 +287,28 @@ export function VerifyOtpForm() {
             {statusMessage && (
               <div
                 role="status"
-                className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs font-medium text-emerald-700"
+                className="flex items-center gap-2 rounded-lg border border-[#10B981]/30 bg-[#10B981]/10 px-3 py-2 text-xs font-medium text-[#34D399]"
               >
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-accent" />
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-[#10B981]" />
                 <span>{statusMessage}</span>
               </div>
             )}
 
             <Button
               type="submit"
+              variant="accent"
               size="lg"
               disabled={!isOtpComplete || isVerifying || isSuccess}
-              className="w-full h-10 bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+              className="w-full h-10"
             >
               {isVerifying ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
                   <span>Verifying...</span>
                 </>
               ) : isSuccess ? (
                 <>
-                  <CheckCircle2 className="h-4 w-4 text-accent" />
+                  <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
                   <span>Verified</span>
                 </>
               ) : (
@@ -304,29 +318,31 @@ export function VerifyOtpForm() {
           </form>
         </CardContent>
 
-        <Separator />
+        <Separator className="bg-[#27272A]" />
 
-        <CardFooter className="px-6 py-4 bg-muted/40 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
+        <CardFooter className="px-6 py-4 bg-[#18181B]/60 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[#A1A1AA]">
           <span>Didn&apos;t receive the code?</span>
           <Button
             type="button"
             variant="ghost"
-            size="sm"
-            onClick={handleResend}
+            size="xs"
             disabled={countdown > 0 || isResending || isVerifying || isSuccess}
-            className="text-xs font-medium text-foreground hover:text-accent"
+            onClick={handleResend}
+            className="text-xs font-medium text-[#34D399] hover:text-[#34D399]"
           >
             {isResending ? (
               <>
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
                 <span>Sending...</span>
               </>
             ) : countdown > 0 ? (
-              <span>Resend code in {countdown}s</span>
+              <span className="font-mono text-[#71717A]">
+                Resend in {countdown}s
+              </span>
             ) : (
               <>
-                <RefreshCw className="h-3.5 w-3.5" />
-                <span>Resend OTP</span>
+                <RefreshCw className="h-3 w-3" aria-hidden="true" />
+                <span>Resend code</span>
               </>
             )}
           </Button>

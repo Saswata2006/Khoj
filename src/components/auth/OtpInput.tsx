@@ -121,9 +121,9 @@ export function OtpInput({
           onKeyDown={(e) => handleKeyDown(index, e)}
           onFocus={(e) => e.currentTarget.select()}
           className={cn(
-            "h-12 sm:h-13 text-center text-lg sm:text-xl font-mono font-semibold tracking-tight bg-card",
-            "focus-visible:border-accent focus-visible:ring-accent/25",
-            hasError && "border-destructive focus-visible:border-destructive focus-visible:ring-destructive/20"
+            "h-12 sm:h-13 text-center text-lg sm:text-xl font-mono font-semibold tracking-tight bg-[#18181B] border-[#27272A] text-[#FAFAFA]",
+            "hover:border-[#3F3F46] focus-visible:border-[#10B981] focus-visible:ring-[#10B981]/30",
+            hasError && "border-[#EF4444] focus-visible:border-[#EF4444] focus-visible:ring-[#EF4444]/25"
           )}
         />
       ))}

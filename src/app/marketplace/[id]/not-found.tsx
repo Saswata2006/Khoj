@@ -18,12 +18,12 @@ export default function ListingNotFound() {
       <Navbar />
 
       <main className="flex-1 flex items-center justify-center px-4 py-12">
-        <Card className="w-full max-w-md border-border bg-card shadow-xs py-6">
-          <CardHeader className="px-6 space-y-2">
-            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-muted text-foreground">
+        <Card className="w-full max-w-md border-[#27272A] bg-[#111113] py-6">
+          <CardHeader className="px-6 space-y-2.5">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#27272A] bg-[#18181B] text-[#A1A1AA]">
               <SearchX className="h-5 w-5" />
             </div>
-            <CardTitle className="text-xl font-bold">
+            <CardTitle className="text-xl font-semibold">
               Listing Not Found
             </CardTitle>
             <CardDescription>
@@ -35,8 +35,8 @@ export default function ListingNotFound() {
             <Link
               href="/marketplace"
               className={cn(
-                buttonVariants({ size: "sm" }),
-                "flex-1 bg-primary text-primary-foreground inline-flex items-center justify-center gap-1.5"
+                buttonVariants({ variant: "accent", size: "sm" }),
+                "flex-1 inline-flex items-center justify-center gap-1.5"
               )}
             >
               <ArrowLeft className="h-4 w-4" />

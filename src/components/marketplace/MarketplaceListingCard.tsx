@@ -34,23 +34,28 @@ export function MarketplaceListingCard({
     <Link
       href={`/marketplace/${listing.id}`}
       aria-label={`${listing.title} — ${formattedPrice}`}
-      className="group block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="group block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981]"
     >
-      <Card className="h-full border-border bg-card shadow-2xs transition-all group-hover:border-slate-300 group-hover:shadow-sm py-0 overflow-hidden">
-        {/* Primary Product Image */}
-        <div className="relative aspect-4/3 w-full overflow-hidden bg-muted border-b border-border">
+      <Card className="flex h-full flex-col rounded-2xl border-[#27272A] bg-[#111113] py-0 overflow-hidden card-interactive">
+        {/* Large Stable Product Photography Frame */}
+        <div className="relative aspect-4/3 w-full overflow-hidden border-b border-[#27272A] bg-[#141417]">
           <MarketplaceImage
             src={primaryImage?.imageUrl}
             alt={listing.title}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             deliveryPolicy={deliveryPolicy}
-            className="transition-transform duration-300 group-hover:scale-[1.02]"
+            className="transition-transform duration-300 ease-out group-hover:scale-[1.04]"
           />
 
-          <div className="pointer-events-none absolute inset-x-2.5 top-2.5 flex items-start justify-between gap-2">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/55 to-transparent"
+          />
+
+          <div className="pointer-events-none absolute inset-x-3 top-3 flex items-start justify-between gap-2">
             <Badge
               variant="secondary"
-              className="bg-background/90 text-foreground backdrop-blur-xs text-[11px] font-medium shadow-2xs"
+              className="border-[#27272A] bg-[#09090B]/85 text-[#FAFAFA] backdrop-blur-md text-[11px] font-medium"
             >
               {categoryLabel}
             </Badge>
@@ -59,12 +64,12 @@ export function MarketplaceListingCard({
               <Badge
                 variant="secondary"
                 className={cn(
-                  "text-[11px] font-semibold shadow-2xs backdrop-blur-xs",
+                  "backdrop-blur-md text-[11px] font-semibold",
                   isSold
-                    ? "bg-amber-500 text-slate-950"
+                    ? "border-[#F59E0B]/40 bg-[#F59E0B] text-[#09090B]"
                     : isRemoved
-                      ? "bg-muted text-muted-foreground"
-                      : "bg-emerald-600 text-white"
+                      ? "border-[#27272A] bg-[#1C1C20]/90 text-[#A1A1AA]"
+                      : "border-[#10B981]/35 bg-[#09090B]/85 text-[#34D399]"
                 )}
               >
                 {isSold ? "Sold" : isRemoved ? "Removed" : "Available"}
@@ -73,28 +78,31 @@ export function MarketplaceListingCard({
           </div>
         </div>
 
-        {/* Listing Details */}
-        <CardContent className="flex flex-1 flex-col justify-between gap-3 p-4">
-          <div className="space-y-1.5">
+        {/* Product Details & Meta */}
+        <CardContent className="flex flex-1 flex-col justify-between gap-4 p-4 sm:p-5">
+          <div className="space-y-2">
             <div className="flex items-baseline justify-between gap-2">
-              <p className="font-heading text-lg font-bold tracking-tight text-primary">
+              <p className="font-heading text-xl font-semibold text-[#FAFAFA] price-tabular transition-colors group-hover:text-[#34D399]">
                 {formattedPrice}
               </p>
               {conditionMeta && (
-                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground shrink-0">
-                  <Tag className="h-3 w-3 text-accent" aria-hidden="true" />
+                <span className="inline-flex items-center gap-1 rounded-md border border-[#27272A] bg-[#18181B] px-2 py-0.5 text-[11px] font-medium text-[#A1A1AA] shrink-0">
+                  <Tag className="h-3 w-3 text-[#10B981]" aria-hidden="true" />
                   <span>{conditionMeta.label}</span>
                 </span>
               )}
             </div>
 
-            <h2 className="font-heading text-sm sm:text-base font-semibold leading-snug text-foreground line-clamp-2 group-hover:text-accent transition-colors">
+            <h2 className="font-heading text-sm sm:text-[15px] font-medium leading-snug text-[#FAFAFA] line-clamp-2">
               {listing.title}
             </h2>
           </div>
 
-          <div className="flex items-center gap-1.5 pt-2 border-t border-border/60 text-xs text-muted-foreground">
-            <MapPin className="h-3.5 w-3.5 shrink-0 text-accent" aria-hidden="true" />
+          <div className="flex items-center gap-1.5 border-t border-[#27272A]/80 pt-3 text-xs text-[#A1A1AA]">
+            <MapPin
+              className="h-3.5 w-3.5 shrink-0 text-[#10B981]"
+              aria-hidden="true"
+            />
             <span className="truncate">{listing.location}</span>
           </div>
         </CardContent>

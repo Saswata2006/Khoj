@@ -67,30 +67,30 @@ function EditUnavailableView({
       <main className="flex-1 flex items-center justify-center px-4 py-12">
         <Card
           className={cn(
-            "w-full max-w-md bg-card shadow-xs py-6",
-            variant === "forbidden" ? "border-destructive/30" : "border-border"
+            "w-full max-w-md bg-[#111113] py-6",
+            variant === "forbidden" ? "border-[#EF4444]/30" : "border-[#27272A]"
           )}
         >
-          <CardHeader className="px-6 space-y-2">
+          <CardHeader className="px-6 space-y-2.5">
             <div
               className={cn(
-                "flex h-10 w-10 items-center justify-center rounded-lg",
+                "flex h-10 w-10 items-center justify-center rounded-xl border",
                 variant === "forbidden"
-                  ? "bg-destructive/10 text-destructive"
-                  : "bg-muted text-foreground"
+                  ? "border-[#EF4444]/30 bg-[#EF4444]/15 text-[#FCA5A5]"
+                  : "border-[#27272A] bg-[#18181B] text-[#FAFAFA]"
               )}
             >
               <Icon className="h-5 w-5" />
             </div>
-            <CardTitle className="text-xl font-bold">{title}</CardTitle>
+            <CardTitle className="text-xl font-semibold">{title}</CardTitle>
             <CardDescription>{description}</CardDescription>
           </CardHeader>
           <CardContent className="px-6 flex flex-col sm:flex-row gap-2.5">
             <Link
               href="/dashboard"
               className={cn(
-                buttonVariants({ size: "sm" }),
-                "flex-1 bg-primary text-primary-foreground"
+                buttonVariants({ variant: "accent", size: "sm" }),
+                "flex-1"
               )}
             >
               Return to Dashboard

@@ -198,7 +198,7 @@ export function MarketplaceFilterPanel({
     >
       {/* Category Filter */}
       <fieldset className="space-y-2.5">
-        <legend className="text-xs font-semibold uppercase tracking-wider text-foreground">
+        <legend className="font-mono text-[11px] font-semibold uppercase tracking-wider text-[#A1A1AA]">
           Category
         </legend>
         <div className="flex flex-col gap-1">
@@ -208,10 +208,10 @@ export function MarketplaceFilterPanel({
             aria-pressed={selectedCategory === ""}
             onClick={() => handleCategorySelect("")}
             className={cn(
-              "flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "flex w-full items-center justify-between rounded-lg border px-2.5 py-1.5 text-left text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981]",
               selectedCategory === ""
-                ? "bg-primary text-primary-foreground font-semibold"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                ? "border-[#10B981]/35 bg-[#10B981]/12 text-[#34D399] font-semibold"
+                : "border-transparent text-[#A1A1AA] hover:bg-[#18181B] hover:text-[#FAFAFA]"
             )}
           >
             <span>All Categories</span>
@@ -227,10 +227,10 @@ export function MarketplaceFilterPanel({
                 aria-pressed={isSelected}
                 onClick={() => handleCategorySelect(cat.value)}
                 className={cn(
-                  "flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "flex w-full items-center justify-between rounded-lg border px-2.5 py-1.5 text-left text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981]",
                   isSelected
-                    ? "bg-primary text-primary-foreground font-semibold"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "border-[#10B981]/35 bg-[#10B981]/12 text-[#34D399] font-semibold"
+                    : "border-transparent text-[#A1A1AA] hover:bg-[#18181B] hover:text-[#FAFAFA]"
                 )}
               >
                 <span className="truncate">{cat.label}</span>
@@ -240,11 +240,11 @@ export function MarketplaceFilterPanel({
         </div>
       </fieldset>
 
-      <Separator />
+      <Separator className="bg-[#27272A]" />
 
       {/* Product Condition Filter */}
       <fieldset className="space-y-2.5">
-        <legend className="text-xs font-semibold uppercase tracking-wider text-foreground">
+        <legend className="font-mono text-[11px] font-semibold uppercase tracking-wider text-[#A1A1AA]">
           Condition
         </legend>
         <div className="flex flex-wrap gap-1.5">
@@ -254,10 +254,10 @@ export function MarketplaceFilterPanel({
             aria-pressed={selectedCondition === ""}
             onClick={() => handleConditionSelect("")}
             className={cn(
-              "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981]",
               selectedCondition === ""
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground"
+                ? "border-[#10B981]/40 bg-[#10B981]/15 text-[#34D399]"
+                : "border-[#27272A] bg-[#18181B] text-[#A1A1AA] hover:border-[#3F3F46] hover:text-[#FAFAFA]"
             )}
           >
             All Conditions
@@ -273,10 +273,10 @@ export function MarketplaceFilterPanel({
                 aria-pressed={isSelected}
                 onClick={() => handleConditionSelect(condKey)}
                 className={cn(
-                  "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981]",
                   isSelected
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "border-[#10B981]/40 bg-[#10B981]/15 text-[#34D399]"
+                    : "border-[#27272A] bg-[#18181B] text-[#A1A1AA] hover:border-[#3F3F46] hover:text-[#FAFAFA]"
                 )}
               >
                 {CONDITIONS[condKey].label}
@@ -286,24 +286,24 @@ export function MarketplaceFilterPanel({
         </div>
       </fieldset>
 
-      <Separator />
+      <Separator className="bg-[#27272A]" />
 
       {/* Price Range (INR) */}
       <fieldset className="space-y-2.5">
-        <legend className="text-xs font-semibold uppercase tracking-wider text-foreground">
+        <legend className="font-mono text-[11px] font-semibold uppercase tracking-wider text-[#A1A1AA]">
           Price Range (INR)
         </legend>
         <div className="grid grid-cols-2 gap-2.5">
           <div className="space-y-1">
             <label
               htmlFor={`${idPrefix}-min-price`}
-              className="block text-[11px] font-medium text-muted-foreground"
+              className="block text-[11px] font-medium text-[#A1A1AA]"
             >
               Min (₹)
             </label>
             <div className="relative">
               <IndianRupee
-                className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground"
+                className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#71717A]"
                 aria-hidden="true"
               />
               <Input
@@ -317,7 +317,7 @@ export function MarketplaceFilterPanel({
                 value={activeDraft.minPrice}
                 onChange={(e) => updateDraft({ minPrice: e.target.value })}
                 placeholder="0"
-                className="h-9 bg-background pl-7 text-xs"
+                className="h-9 bg-[#18181B] pl-7 text-xs"
               />
             </div>
           </div>
@@ -325,13 +325,13 @@ export function MarketplaceFilterPanel({
           <div className="space-y-1">
             <label
               htmlFor={`${idPrefix}-max-price`}
-              className="block text-[11px] font-medium text-muted-foreground"
+              className="block text-[11px] font-medium text-[#A1A1AA]"
             >
               Max (₹)
             </label>
             <div className="relative">
               <IndianRupee
-                className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground"
+                className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#71717A]"
                 aria-hidden="true"
               />
               <Input
@@ -345,26 +345,26 @@ export function MarketplaceFilterPanel({
                 value={activeDraft.maxPrice}
                 onChange={(e) => updateDraft({ maxPrice: e.target.value })}
                 placeholder="Any"
-                className="h-9 bg-background pl-7 text-xs"
+                className="h-9 bg-[#18181B] pl-7 text-xs"
               />
             </div>
           </div>
         </div>
       </fieldset>
 
-      <Separator />
+      <Separator className="bg-[#27272A]" />
 
       {/* General Location */}
       <div className="space-y-2">
         <label
           htmlFor={`${idPrefix}-location`}
-          className="block text-xs font-semibold uppercase tracking-wider text-foreground"
+          className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-[#A1A1AA]"
         >
           General Location
         </label>
         <div className="relative">
           <MapPin
-            className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground"
+            className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#71717A]"
             aria-hidden="true"
           />
           <Input
@@ -375,7 +375,7 @@ export function MarketplaceFilterPanel({
             value={activeDraft.location}
             onChange={(e) => updateDraft({ location: e.target.value })}
             placeholder="e.g., Library, Hostel 4, South Gate"
-            className="h-9 bg-background pl-8 text-xs"
+            className="h-9 bg-[#18181B] pl-8 text-xs"
           />
         </div>
       </div>
@@ -384,7 +384,7 @@ export function MarketplaceFilterPanel({
       {displayedError && (
         <p
           role="alert"
-          className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive"
+          className="rounded-lg border border-[#EF4444]/30 bg-[#EF4444]/10 px-3 py-2 text-xs font-medium text-[#FCA5A5]"
         >
           {displayedError}
         </p>
@@ -394,9 +394,10 @@ export function MarketplaceFilterPanel({
       <div className="flex flex-col gap-2 pt-1">
         <Button
           type="submit"
+          variant="default"
           size="default"
           disabled={isPending && mode === "desktop"}
-          className="w-full bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold"
+          className="w-full text-xs font-semibold"
         >
           {mode === "mobile" ? "Apply Filters" : "Apply Price & Location"}
         </Button>

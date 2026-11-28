@@ -1,76 +1,63 @@
-import { MailCheck, PlusCircle, Handshake, MapPin } from "lucide-react";
+import { KeyRound, PackageCheck, ShieldCheck } from "lucide-react";
+
+const STEPS = [
+  {
+    step: "01",
+    icon: KeyRound,
+    title: "Verify in Seconds",
+    description:
+      "Sign in with a 6-digit email OTP. No passwords to forget, and every buyer or seller starts verified.",
+  },
+  {
+    step: "02",
+    icon: PackageCheck,
+    title: "Browse or Post Items",
+    description:
+      "Search live marketplace listings by category, price, and condition, or publish an item with signed photos in under a minute.",
+  },
+  {
+    step: "03",
+    icon: ShieldCheck,
+    title: "Meet Safely in Person",
+    description:
+      "Coordinate at familiar campus landmarks or public spots, inspect the item firsthand, and mark listings sold cleanly.",
+  },
+];
 
 export function HowItWorksSection() {
-  const steps = [
-    {
-      step: "01",
-      icon: MailCheck,
-      title: "Verify Your Email",
-      description:
-        "Sign in using any valid email address with a passwordless 6-digit one-time code.",
-    },
-    {
-      step: "02",
-      icon: PlusCircle,
-      title: "Browse or Post Items",
-      description:
-        "Browse or post Marketplace items with photos and condition grades (Lost & Found reporting launching next).",
-    },
-    {
-      step: "03",
-      icon: Handshake,
-      title: "Claims & Requests (Soon)",
-      description:
-        "Buyers send contact requests privately, while finders review ownership claims before releasing items.",
-    },
-    {
-      step: "04",
-      icon: MapPin,
-      title: "Local Meetups",
-      description:
-        "Coordinate a safe, public local or campus meetup to inspect the item and complete the handover.",
-    },
-  ];
-
   return (
-    <section
-      id="how-it-works"
-      className="py-16 sm:py-20 bg-muted/40 border-t border-border"
-    >
+    <section id="how-it-works" className="bg-[#09090B] py-16 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-accent">
-            Simple Process
+        <div className="max-w-2xl space-y-3">
+          <p className="font-mono text-xs uppercase tracking-wider text-[#10B981]">
+            Workflow
+          </p>
+          <h2 className="font-heading text-2xl font-semibold tracking-tight text-[#FAFAFA] sm:text-3xl">
+            How Khoj works from sign-in to handover.
           </h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-foreground font-heading">
-            How Khoj works in 4 clear steps
-          </p>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Structured around email-verified accounts, transparent listings, and
-            thoughtful local meetups.
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {steps.map((item) => {
+        <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
+          {STEPS.map((item) => {
             const Icon = item.icon;
             return (
               <div
                 key={item.step}
-                className="relative flex flex-col p-6 rounded-xl bg-card border border-border shadow-2xs"
+                className="relative rounded-xl border border-[#27272A] bg-[#111113] p-6"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
-                    <Icon className="h-5 w-5 text-accent" />
-                  </div>
-                  <span className="font-mono text-2xl font-black text-muted-foreground/30">
-                    {item.step}
+                <div className="flex items-center justify-between">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#10B981]/30 bg-[#10B981]/12 text-[#34D399]">
+                    <Icon className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                  <span className="font-mono text-xs font-semibold tracking-widest text-[#71717A]">
+                    STEP {item.step}
                   </span>
                 </div>
-                <h3 className="font-heading font-semibold text-base text-foreground mb-2">
+
+                <h3 className="mt-5 font-heading text-base font-semibold text-[#FAFAFA]">
                   {item.title}
                 </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
+                <p className="mt-2 text-sm leading-relaxed text-[#A1A1AA]">
                   {item.description}
                 </p>
               </div>
