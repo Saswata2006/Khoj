@@ -239,6 +239,13 @@ export interface MarketplaceListingClientDTO {
   images: UploadedImageSummary[];
 }
 
+export type MarketplaceListingCardDTO = Omit<
+  MarketplaceListingClientDTO,
+  "description"
+> & {
+  description?: string;
+};
+
 export interface CloudinaryDeliveryPolicy {
   cloudName?: string;
   environment?: "development" | "preview" | "production";

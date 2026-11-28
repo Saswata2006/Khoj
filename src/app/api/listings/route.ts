@@ -13,7 +13,9 @@ import {
 
 /**
  * GET /api/listings
- * Returns paginated active public marketplace listings (`type: "SALE"`).
+ * Returns paginated active public marketplace listings (`type: "SALE"`, `status: "ACTIVE"`)
+ * filtered by `q`, `category`, `condition`, `minPrice`, `maxPrice`, `location`,
+ * and sorted deterministically by `sort` (`newest` | `oldest` | `price_asc` | `price_desc`).
  */
 export async function GET(request: Request) {
   try {

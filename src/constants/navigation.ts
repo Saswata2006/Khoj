@@ -49,10 +49,10 @@ export const FOOTER_NAV_SECTIONS = [
   {
     title: "Categories",
     links: [
-      { title: "Books & Study Material", href: "/#marketplace", disabled: true },
-      { title: "Electronics & Gadgets", href: "/#marketplace", disabled: true },
-      { title: "Cycles & Commute", href: "/#marketplace", disabled: true },
-      { title: "Stationery & Tools", href: "/#marketplace", disabled: true },
+      { title: "Books & Study Material", href: "/marketplace?category=BOOKS", disabled: false },
+      { title: "Electronics & Gadgets", href: "/marketplace?category=ELECTRONICS", disabled: false },
+      { title: "Cycles & Commute", href: "/marketplace?category=CYCLES", disabled: false },
+      { title: "Stationery & Tools", href: "/marketplace?category=STATIONERY", disabled: false },
     ],
   },
   {

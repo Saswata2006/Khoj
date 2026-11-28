@@ -1,11 +1,13 @@
-import { NextResponse } from "next/server";
+import { connection, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 /**
  * Health check endpoint for monitoring application status and database connectivity.
- * Executes a lightweight SELECT 1 query and avoids leaking database credentials.
+ * Executes a lightweight SELECT 1 query at request time only and avoids leaking database credentials.
  */
 export async function GET() {
+  await connection();
+
   try {
     // Lightweight database connectivity check
     await prisma.$queryRaw`SELECT 1`;
