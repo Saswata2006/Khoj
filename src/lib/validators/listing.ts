@@ -163,7 +163,7 @@ function parseBoundedIntQueryValue(
   return parsed;
 }
 
-function makeBoundedIntQuerySchema(
+export function makeBoundedIntQuerySchema(
   label: string,
   min: number,
   max: number,

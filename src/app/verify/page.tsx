@@ -23,7 +23,7 @@ async function VerifyContent() {
 
 function VerifySkeleton() {
   return (
-    <Card className="shadow-sm border-border bg-card py-6">
+    <Card className="border-[#27272A] bg-[#111113] shadow-xl py-6">
       <CardHeader className="px-6 space-y-2">
         <Skeleton className="h-6 w-44" />
         <Skeleton className="h-4 w-64" />

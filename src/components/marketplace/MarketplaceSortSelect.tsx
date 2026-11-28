@@ -6,6 +6,7 @@ import {
   MARKETPLACE_SORT_LABELS,
   type MarketplaceSortOption,
 } from "@/lib/marketplace-search";
+import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 export interface MarketplaceSortSelectProps {
@@ -25,27 +26,27 @@ export function MarketplaceSortSelect({
     <div className={cn("flex items-center gap-2", className)}>
       <label
         htmlFor="marketplace-sort-select"
-        className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground whitespace-nowrap"
+        className="inline-flex items-center gap-1.5 text-xs font-medium text-[#A1A1AA] whitespace-nowrap"
       >
-        <ArrowUpDown className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
+        <ArrowUpDown className="h-3.5 w-3.5 text-[#10B981]" aria-hidden="true" />
         <span>Sort by</span>
       </label>
 
-      <select
+      <Select
         id="marketplace-sort-select"
         name="sort"
         aria-label="Sort marketplace listings"
         value={value}
         disabled={disabled}
         onChange={(e) => onChange(e.target.value as MarketplaceSortOption)}
-        className="h-9 rounded-lg border border-input bg-background px-2.5 text-xs font-medium text-foreground transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50"
+        className="h-8 bg-[#18181B] text-xs font-medium pr-8 pl-2.5"
       >
         {MARKETPLACE_SORT_OPTIONS.map((option) => (
           <option key={option} value={option}>
             {MARKETPLACE_SORT_LABELS[option]}
           </option>
         ))}
-      </select>
+      </Select>
     </div>
   );
 }

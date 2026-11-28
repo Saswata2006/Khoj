@@ -466,23 +466,17 @@ export function EditListingForm({ listing }: EditListingFormProps) {
         </div>
 
         <Badge
-          variant="secondary"
-          className={cn(
-            "text-[11px] font-medium",
-            persistedStatus === "SOLD"
-              ? "bg-amber-500/15 text-amber-800"
-              : "bg-emerald-500/10 text-emerald-700"
-          )}
+          variant={persistedStatus === "SOLD" ? "warning" : "accent"}
         >
           Status: {persistedStatus === "SOLD" ? "Sold" : "Active"}
         </Badge>
       </div>
 
-      <div className="space-y-1">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+      <div className="space-y-1.5">
+        <h1 className="font-heading text-2xl sm:text-3xl font-semibold tracking-tight text-[#FAFAFA]">
           Edit listing
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-[#A1A1AA]">
           Update item details, manage uploaded photos, or update availability.
         </p>
       </div>
@@ -490,22 +484,22 @@ export function EditListingForm({ listing }: EditListingFormProps) {
       {persistedStatus === "SOLD" && (
         <div
           role="status"
-          className="flex items-start gap-2.5 rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-xs text-amber-900"
+          className="flex items-start gap-2.5 rounded-xl border border-[#F59E0B]/35 bg-[#F59E0B]/10 px-4 py-3 text-xs text-[#FCD34D]"
         >
-          <CheckCircle2 className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
+          <CheckCircle2 className="h-4 w-4 shrink-0 text-[#F59E0B] mt-0.5" />
           <div className="space-y-1">
-            <p className="font-semibold">
+            <p className="font-semibold text-[#FAFAFA]">
               This listing has been marked as Sold
             </p>
-            <p>
+            <p className="text-[#FDE68A]/90">
               Editing details and modifying photos is locked for sold items.{" "}
-              <Link href="/dashboard/listings" className="underline font-medium">
+              <Link href="/dashboard/listings" className="underline font-medium text-[#FAFAFA]">
                 Return to My Listings
               </Link>{" "}
               or{" "}
               <Link
                 href={`/marketplace/${listing.id}`}
-                className="underline font-medium"
+                className="underline font-medium text-[#FAFAFA]"
               >
                 view public listing
               </Link>
@@ -550,8 +544,8 @@ export function EditListingForm({ listing }: EditListingFormProps) {
           </CardContent>
         </Card>
 
-        {/* Right Column: Photos & Actions */}
-        <div className="lg:col-span-5 space-y-6">
+        {/* Sticky Right Column: Photos & Actions */}
+        <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-6">
           <Card className="border-border bg-card shadow-xs py-6">
             <CardContent className="px-6 space-y-4">
               <ListingImageUploader
@@ -628,9 +622,9 @@ export function EditListingForm({ listing }: EditListingFormProps) {
               {saveSuccess && (
                 <div
                   role="status"
-                  className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2.5 text-xs font-medium text-emerald-700"
+                  className="flex items-center gap-2 rounded-lg border border-[#10B981]/30 bg-[#10B981]/10 px-3 py-2.5 text-xs font-medium text-[#34D399]"
                 >
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-accent" />
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-[#10B981]" />
                   <span>{saveSuccess}</span>
                 </div>
               )}
@@ -638,9 +632,10 @@ export function EditListingForm({ listing }: EditListingFormProps) {
               <div className="flex flex-col sm:flex-row gap-2.5">
                 <Button
                   type="submit"
+                  variant="accent"
                   size="lg"
                   disabled={isBusy || isLocked}
-                  className="flex-1 h-11 bg-primary text-primary-foreground hover:bg-primary/90 font-medium inline-flex items-center justify-center gap-2"
+                  className="flex-1 h-11 inline-flex items-center justify-center gap-2"
                 >
                   {isSaving ? (
                     <>

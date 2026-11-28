@@ -41,13 +41,13 @@ export function MarketplacePagination({
   return (
     <nav
       aria-label="Marketplace pagination"
-      className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-card px-4 py-3 shadow-2xs"
+      className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[#27272A] bg-[#111113] px-4 py-3"
     >
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-[#A1A1AA]">
         Page{" "}
-        <span className="font-semibold text-foreground">{pagination.page}</span>{" "}
+        <span className="font-mono font-semibold text-[#FAFAFA]">{pagination.page}</span>{" "}
         of{" "}
-        <span className="font-semibold text-foreground">
+        <span className="font-mono font-semibold text-[#FAFAFA]">
           {pagination.totalPages}
         </span>
       </p>
@@ -92,8 +92,8 @@ export function MarketplacePagination({
                 key={item}
                 aria-current="page"
                 className={cn(
-                  buttonVariants({ variant: "default", size: "sm" }),
-                  "min-w-8 bg-primary text-primary-foreground pointer-events-none"
+                  buttonVariants({ variant: "accent", size: "sm" }),
+                  "min-w-8 pointer-events-none"
                 )}
               >
                 {item}

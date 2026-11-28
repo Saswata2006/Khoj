@@ -105,13 +105,8 @@ export function ListingImageUploader({
           </p>
         </div>
         <Badge
-          variant="secondary"
-          className={cn(
-            "shrink-0 text-xs font-medium",
-            totalCount >= maxImages
-              ? "bg-amber-500/15 text-amber-800"
-              : "bg-muted text-foreground"
-          )}
+          variant={totalCount >= maxImages ? "warning" : "secondary"}
+          className="shrink-0 font-mono text-xs"
         >
           {totalCount} / {maxImages}
         </Badge>
@@ -123,10 +118,10 @@ export function ListingImageUploader({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         className={cn(
-          "relative rounded-xl border-2 border-dashed p-5 text-center transition-colors",
+          "relative rounded-2xl border border-dashed p-6 text-center transition-all duration-200",
           isDragging && canAddMore
-            ? "border-accent bg-emerald-500/5"
-            : "border-border bg-muted/30",
+            ? "border-[#10B981] bg-[#10B981]/10 shadow-[0_0_0_3px_rgba(16,185,129,0.12)]"
+            : "border-[#27272A] bg-[#141418] hover:border-[#3F3F46] hover:bg-[#18181B]/80",
           !canAddMore && "opacity-60 cursor-not-allowed"
         )}
       >
@@ -143,17 +138,17 @@ export function ListingImageUploader({
         />
 
         <div className="flex flex-col items-center justify-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-background border border-border text-muted-foreground shadow-2xs">
-            <UploadCloud className="h-5 w-5" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#27272A] bg-[#111113] text-[#A1A1AA]">
+            <UploadCloud className="h-5 w-5 text-[#10B981]" />
           </div>
 
           <div className="space-y-1">
-            <p className="text-sm font-medium text-foreground">
+            <p className="text-sm font-medium text-[#FAFAFA]">
               {remainingSlots > 0
                 ? "Drag & drop product photos here"
                 : `Maximum of ${maxImages} photos attached`}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-[#A1A1AA]">
               {remainingSlots > 0
                 ? `You can add up to ${remainingSlots} more ${
                     remainingSlots === 1 ? "image" : "images"
@@ -168,9 +163,9 @@ export function ListingImageUploader({
             size="sm"
             disabled={!canAddMore}
             onClick={() => fileInputRef.current?.click()}
-            className="mt-1 inline-flex items-center gap-1.5 bg-card"
+            className="mt-1 inline-flex items-center gap-1.5"
           >
-            <ImagePlus className="h-4 w-4" />
+            <ImagePlus className="h-4 w-4 text-[#10B981]" />
             <span>Select Photos</span>
           </Button>
         </div>
@@ -180,11 +175,11 @@ export function ListingImageUploader({
       {selectionErrors.length > 0 && (
         <div
           role="alert"
-          className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive space-y-1"
+          className="rounded-lg border border-[#EF4444]/30 bg-[#EF4444]/10 p-3 text-xs text-[#FCA5A5] space-y-1"
         >
           {selectionErrors.map((errMsg, index) => (
             <div key={`${errMsg}-${index}`} className="flex items-start gap-2">
-              <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+              <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5 text-[#EF4444]" />
               <span>{errMsg}</span>
             </div>
           ))}
@@ -194,9 +189,9 @@ export function ListingImageUploader({
       {deleteError && (
         <div
           role="alert"
-          className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs font-medium text-destructive"
+          className="flex items-start gap-2 rounded-lg border border-[#EF4444]/30 bg-[#EF4444]/10 p-3 text-xs font-medium text-[#FCA5A5]"
         >
-          <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+          <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-[#EF4444]" />
           <span>{deleteError}</span>
         </div>
       )}
@@ -204,7 +199,7 @@ export function ListingImageUploader({
       {/* Existing Uploaded Images Grid */}
       {existingImages.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs font-medium text-muted-foreground">
+          <p className="text-xs font-medium text-[#A1A1AA]">
             Saved photos ({existingImages.length})
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -215,9 +210,9 @@ export function ListingImageUploader({
               return (
                 <div
                   key={img.id}
-                  className="overflow-hidden rounded-lg border border-border bg-card shadow-2xs"
+                  className="overflow-hidden rounded-lg border border-[#27272A] bg-[#18181B]"
                 >
-                  <div className="relative aspect-4/3 w-full bg-muted">
+                  <div className="relative aspect-4/3 w-full bg-[#111113]">
                     <Image
                       unoptimized
                       src={img.imageUrl}
@@ -226,17 +221,17 @@ export function ListingImageUploader({
                       sizes="(max-width: 640px) 100vw, 240px"
                       className="object-cover"
                     />
-                    <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-md bg-background/90 px-2 py-0.5 text-[11px] font-medium text-emerald-700 shadow-2xs">
-                      <CheckCircle2 className="h-3 w-3 text-accent" />
+                    <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full border border-[#10B981]/35 bg-[#09090B]/85 px-2 py-0.5 text-[11px] font-medium text-[#34D399] backdrop-blur-xs">
+                      <CheckCircle2 className="h-3 w-3 text-[#10B981]" />
                       Uploaded
                     </span>
                   </div>
 
                   {onDeleteExistingImage && (
-                    <div className="flex items-center justify-between gap-2 px-3 py-2 bg-muted/20 border-t border-border">
+                    <div className="flex items-center justify-between gap-2 px-3 py-2 bg-[#111113] border-t border-[#27272A]">
                       {isConfirming ? (
                         <div className="flex w-full items-center justify-between gap-2">
-                          <span className="text-[11px] font-medium text-destructive">
+                          <span className="text-[11px] font-medium text-[#FCA5A5]">
                             Remove photo?
                           </span>
                           <div className="flex items-center gap-1.5">
@@ -265,7 +260,7 @@ export function ListingImageUploader({
                         </div>
                       ) : (
                         <>
-                          <span className="text-[11px] text-muted-foreground truncate">
+                          <span className="text-[11px] text-[#A1A1AA] truncate">
                             Photo #{index + 1}
                           </span>
                           <Button
@@ -274,7 +269,7 @@ export function ListingImageUploader({
                             size="xs"
                             disabled={isDeleting || disabled}
                             onClick={() => setConfirmDeleteId(img.id)}
-                            className="text-muted-foreground hover:text-destructive inline-flex items-center gap-1"
+                            className="text-[#A1A1AA] hover:text-[#FCA5A5] inline-flex items-center gap-1"
                             aria-label={`Remove saved photo ${index + 1}`}
                           >
                             {isDeleting ? (
@@ -298,7 +293,7 @@ export function ListingImageUploader({
       {/* Queued / Uploading / Failed Local Previews Grid */}
       {queuedImages.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs font-medium text-muted-foreground">
+          <p className="text-xs font-medium text-[#A1A1AA]">
             Upload queue ({queuedImages.length})
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -311,11 +306,11 @@ export function ListingImageUploader({
                 <div
                   key={item.id}
                   className={cn(
-                    "overflow-hidden rounded-lg border bg-card shadow-2xs",
-                    isError ? "border-destructive/50" : "border-border"
+                    "overflow-hidden rounded-lg border bg-[#18181B]",
+                    isError ? "border-[#EF4444]/50" : "border-[#27272A]"
                   )}
                 >
-                  <div className="relative aspect-4/3 w-full bg-muted">
+                  <div className="relative aspect-4/3 w-full bg-[#111113]">
                     <Image
                       unoptimized
                       src={item.previewUrl}
@@ -331,20 +326,22 @@ export function ListingImageUploader({
                     {/* Status Badge */}
                     <span
                       className={cn(
-                        "absolute left-2 top-2 inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-medium shadow-2xs",
+                        "absolute left-2 top-2 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium backdrop-blur-xs",
                         isUploaded &&
-                          "bg-background/95 text-emerald-700",
-                        isUploading && "bg-primary text-primary-foreground",
-                        isError && "bg-destructive text-destructive-foreground",
+                          "border-[#10B981]/35 bg-[#09090B]/90 text-[#34D399]",
+                        isUploading &&
+                          "border-[#FAFAFA]/20 bg-[#09090B]/90 text-[#FAFAFA]",
+                        isError &&
+                          "border-[#EF4444]/40 bg-[#EF4444] text-[#FAFAFA]",
                         item.status === "queued" &&
-                          "bg-background/95 text-foreground"
+                          "border-[#27272A] bg-[#09090B]/90 text-[#FAFAFA]"
                       )}
                     >
                       {isUploading && (
-                        <Loader2 className="h-3 w-3 animate-spin" />
+                        <Loader2 className="h-3 w-3 animate-spin text-[#10B981]" />
                       )}
                       {isUploaded && (
-                        <CheckCircle2 className="h-3 w-3 text-accent" />
+                        <CheckCircle2 className="h-3 w-3 text-[#10B981]" />
                       )}
                       {isError && <AlertCircle className="h-3 w-3" />}
                       <span>
@@ -362,39 +359,39 @@ export function ListingImageUploader({
                         disabled={disabled}
                         onClick={() => onRemoveQueuedImage(item.id)}
                         aria-label={`Remove ${item.file.name}`}
-                        className="absolute right-2 top-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-background/90 text-foreground shadow-2xs hover:bg-destructive hover:text-destructive-foreground transition-colors disabled:opacity-50"
+                        className="absolute right-2 top-2 inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#27272A] bg-[#09090B]/90 text-[#FAFAFA] hover:bg-[#EF4444] hover:border-[#EF4444] transition-colors disabled:opacity-50"
                       >
                         <X className="h-3.5 w-3.5" />
                       </button>
                     )}
                   </div>
 
-                  <div className="px-3 py-2 space-y-1.5 border-t border-border bg-muted/20">
+                  <div className="px-3 py-2 space-y-1.5 border-t border-[#27272A] bg-[#111113]">
                     <div className="flex items-center justify-between gap-2">
                       <span
                         title={item.file.name}
-                        className="truncate text-xs font-medium text-foreground"
+                        className="truncate text-xs font-medium text-[#FAFAFA]"
                       >
                         {item.file.name}
                       </span>
-                      <span className="shrink-0 text-[11px] text-muted-foreground">
+                      <span className="shrink-0 font-mono text-[11px] text-[#71717A]">
                         {(item.file.size / 1024).toFixed(0)} KB
                       </span>
                     </div>
 
                     {isError && (
                       <div className="space-y-1.5">
-                        <p className="text-[11px] leading-snug text-destructive">
+                        <p className="text-[11px] leading-snug text-[#FCA5A5]">
                           {item.error ?? "Upload failed. Please retry or remove."}
                         </p>
                         {onRetryQueuedImage && (
                           <Button
                             type="button"
-                            variant="outline"
+                            variant="destructive"
                             size="xs"
                             disabled={disabled}
                             onClick={() => onRetryQueuedImage(item.id)}
-                            className="w-full inline-flex items-center justify-center gap-1 border-destructive/40 text-destructive hover:bg-destructive/10"
+                            className="w-full inline-flex items-center justify-center gap-1"
                           >
                             <RefreshCw className="h-3 w-3" />
                             <span>Retry Upload</span>

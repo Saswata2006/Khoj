@@ -1,203 +1,210 @@
 import Link from "next/link";
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
+  ArrowUpRight,
+  Camera,
+  CheckCircle2,
+  Clock,
+  EyeOff,
+  KeyRound,
+  Search,
+  ShoppingBag,
+  SlidersHorizontal,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ShoppingBag, Search, ShieldCheck, CheckCircle2, ArrowRight } from "lucide-react";
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="py-16 sm:py-20">
+    <section
+      id="features"
+      className="border-b border-[#27272A] bg-[#09090B] py-16 sm:py-24"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-accent">
-            Core Modules
-          </h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-foreground font-heading">
-            Built for local communities and campuses
-          </p>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Whether you are selling pre-owned gear in your neighborhood, trading
-            textbooks on campus, or helping recover a misplaced item, Khoj keeps
-            everything organized.
-          </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-2xl space-y-2.5">
+            <p className="font-mono text-xs uppercase tracking-widest text-[#10B981]">
+              Platform Architecture
+            </p>
+            <h2 className="font-heading text-section-heading text-[#FAFAFA]">
+              Designed around speed, privacy, and clear state transitions.
+            </h2>
+          </div>
+
+          <Link
+            href="/marketplace"
+            className={cn(
+              buttonVariants({ variant: "outline", size: "sm" }),
+              "w-fit inline-flex items-center gap-1.5"
+            )}
+          >
+            <span>Explore Catalog</span>
+            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Feature 1: Marketplace */}
-          <Card
-            id="marketplace"
-            className="relative flex flex-col justify-between border-border bg-card shadow-xs hover:border-slate-400 transition-colors"
-          >
-            <CardHeader>
-              <div className="flex items-center justify-between mb-2">
-                <div className="h-10 w-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center">
-                  <ShoppingBag className="h-5 w-5 text-emerald-400" />
-                </div>
-                <Badge
-                  variant="secondary"
-                  className="bg-emerald-500/15 text-emerald-700 text-xs"
-                >
-                  Live Now
-                </Badge>
+        {/* Asymmetric Bento Composition */}
+        <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-12">
+          {/* Tile 1 (7 cols): Buying & Selling */}
+          <div className="lg:col-span-7 flex flex-col justify-between rounded-2xl border border-[#27272A] bg-[#111113] p-6 sm:p-7 surface-specular transition-colors hover:border-[#3F3F46]">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between gap-2">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#10B981]/30 bg-[#10B981]/12 text-[#34D399]">
+                  <ShoppingBag className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <Badge variant="accent">Live Now</Badge>
               </div>
-              <CardTitle className="text-xl font-bold font-heading">
-                Community Marketplace
-              </CardTitle>
-              <CardDescription className="text-sm">
-                Buy and sell pre-owned books, electronics, cycles, and everyday
-                items nearby.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <ul className="space-y-2 text-xs text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>
-                    Clear item condition grading (New, Like New, Good, Fair)
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>
-                    Structured contact requests coming soon &mdash; no public phone spam
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>
-                    Organized categories for local neighborhoods and campus living
-                  </span>
-                </li>
+
+              <div className="space-y-2">
+                <h3 className="font-heading text-xl font-semibold text-[#FAFAFA]">
+                  Buying &amp; Selling Without Platform Friction
+                </h3>
+                <p className="max-w-xl text-sm leading-relaxed text-[#A1A1AA]">
+                  Publish pre-owned books, electronics, cycles, and essentials with
+                  fixed INR pricing, accurate condition tiers, and up to 5 photos.
+                  Active listings go live immediately and lock cleanly once Sold.
+                </p>
+              </div>
+
+              <ul className="grid grid-cols-1 gap-2 pt-2 text-xs text-[#A1A1AA] sm:grid-cols-2">
+                {[
+                  "Fixed INR pricing & condition tiers",
+                  "One-click Sold status locking",
+                  "Draft recovery on refresh",
+                  "Direct photo queue management",
+                ].map((point) => (
+                  <li key={point} className="flex items-center gap-2">
+                    <CheckCircle2
+                      className="h-3.5 w-3.5 shrink-0 text-[#10B981]"
+                      aria-hidden="true"
+                    />
+                    <span>{point}</span>
+                  </li>
+                ))}
               </ul>
+            </div>
 
-              <div className="flex flex-wrap gap-2 pt-1">
-                <Link
-                  href="/marketplace"
-                  className={cn(
-                    buttonVariants({ size: "sm" }),
-                    "bg-primary text-primary-foreground hover:bg-primary/90 text-xs inline-flex items-center gap-1.5"
-                  )}
-                >
-                  <span>Browse Marketplace</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-                <Link
-                  href="/marketplace/create"
-                  className={cn(
-                    buttonVariants({ variant: "outline", size: "sm" }),
-                    "text-xs"
-                  )}
-                >
-                  Sell an Item
-                </Link>
+            <div className="mt-7 flex flex-wrap items-center gap-2.5 border-t border-[#27272A] pt-5">
+              <Link
+                href="/marketplace"
+                className={cn(
+                  buttonVariants({ variant: "accent", size: "sm" }),
+                  "px-4"
+                )}
+              >
+                Browse Marketplace
+              </Link>
+              <Link
+                href="/marketplace/create"
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "sm" }),
+                  "px-4"
+                )}
+              >
+                Sell an Item
+              </Link>
+            </div>
+          </div>
+
+          {/* Tile 2 (5 cols): Advanced Product Discovery */}
+          <div className="lg:col-span-5 flex flex-col justify-between rounded-2xl border border-[#27272A] bg-[#111113] p-6 surface-specular transition-colors hover:border-[#3F3F46]">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between gap-2">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#27272A] bg-[#18181B] text-[#FAFAFA]">
+                  <SlidersHorizontal className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <span className="font-mono text-[11px] text-[#71717A]">
+                  400ms Debounce
+                </span>
               </div>
-            </CardContent>
-          </Card>
 
-          {/* Feature 2: Lost & Found */}
-          <Card
-            id="lost-and-found"
-            className="relative flex flex-col justify-between border-border bg-card shadow-xs hover:border-slate-400 transition-colors"
-          >
-            <CardHeader>
-              <div className="flex items-center justify-between mb-2">
-                <div className="h-10 w-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center">
-                  <Search className="h-5 w-5" />
-                </div>
-                <Badge
-                  variant="secondary"
-                  className="bg-emerald-500/10 text-emerald-700 text-xs"
-                >
-                  Coming Soon
-                </Badge>
+              <div className="space-y-2">
+                <h3 className="font-heading text-lg font-semibold text-[#FAFAFA]">
+                  Advanced Product Discovery
+                </h3>
+                <p className="text-sm leading-relaxed text-[#A1A1AA]">
+                  Filter concurrently by keyword, category, item condition, INR
+                  price range, and general meetup area—with bookmarkable URL query
+                  parameters and deterministic sorting.
+                </p>
               </div>
-              <CardTitle className="text-xl font-bold font-heading">
-                Lost &amp; Found Registry
-              </CardTitle>
-              <CardDescription className="text-sm">
-                Structured listings for lost and found belongings with ownership
-                claim reviews.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <ul className="space-y-2 text-xs text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>
-                    Ownership claims with identifying details before item handover
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>
-                    Location notes for public venues, transit stops, or campus buildings
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>
-                    Dedicated LOST and FOUND workflows separated from sales listings
-                  </span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
+            </div>
 
-          {/* Feature 3: Trust & Safety */}
-          <Card
+            <div className="mt-5 rounded-xl border border-[#27272A] bg-[#18181B]/70 p-3 font-mono text-[11px] text-[#A1A1AA]">
+              ?category=ELECTRONICS&amp;condition=LIKE_NEW&amp;sort=price_asc
+            </div>
+          </div>
+
+          {/* Tile 3 (4 cols): Email-Verified Accounts (Honest Description) */}
+          <div
             id="security"
-            className="relative flex flex-col justify-between border-border bg-card shadow-xs hover:border-slate-400 transition-colors"
+            className="lg:col-span-4 rounded-2xl border border-[#27272A] bg-[#111113] p-6 surface-specular transition-colors hover:border-[#3F3F46]"
           >
-            <CardHeader>
-              <div className="flex items-center justify-between mb-2">
-                <div className="h-10 w-10 rounded-lg bg-slate-900 text-white flex items-center justify-center">
-                  <ShieldCheck className="h-5 w-5 text-emerald-400" />
-                </div>
-                <Badge
-                  variant="default"
-                  className="bg-primary text-primary-foreground text-xs"
-                >
-                  Auth Active
-                </Badge>
+            <div className="flex items-center justify-between gap-2">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#10B981]/30 bg-[#10B981]/12 text-[#34D399]">
+                <KeyRound className="h-4 w-4" aria-hidden="true" />
+              </span>
+              <Badge variant="secondary">Email OTP</Badge>
+            </div>
+
+            <h3 className="mt-4 font-heading text-base font-semibold text-[#FAFAFA]">
+              Email-Verified Accounts
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-[#A1A1AA]">
+              Every seller signs in using a 6-digit one-time email passcode. This
+              verifies email address ownership for account access—without claiming
+              real-world background screening or payment guarantees.
+            </p>
+          </div>
+
+          {/* Tile 4 (4 cols): Seller Privacy & Signed Media */}
+          <div className="lg:col-span-4 rounded-2xl border border-[#27272A] bg-[#111113] p-6 surface-specular transition-colors hover:border-[#3F3F46]">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#27272A] bg-[#18181B] text-[#FAFAFA]">
+                  <EyeOff className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#27272A] bg-[#18181B] text-[#A1A1AA]">
+                  <Camera className="h-4 w-4" aria-hidden="true" />
+                </span>
               </div>
-              <CardTitle className="text-xl font-bold font-heading">
-                Email-Verified Accounts &amp; Reporting
-              </CardTitle>
-              <CardDescription className="text-sm">
-                Passwordless email verification paired with structured reporting
-                and local meetup tools.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <ul className="space-y-2 text-xs text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>
-                    Active now: 6-digit email OTP sign-in for personal or institutional emails
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>
-                    Report suspicious activity and review flagged listings (Coming Soon)
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <span>
-                    Optional location and campus block profile settings for local meetups
-                  </span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
+              <Badge variant="secondary">Privacy</Badge>
+            </div>
+
+            <h3 className="mt-4 font-heading text-base font-semibold text-[#FAFAFA]">
+              Seller Privacy &amp; Validated Uploads
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-[#A1A1AA]">
+              Public listing views expose only display names, initials, and
+              general meetup spots—never email addresses. Uploaded photos pass
+              magic-byte and dimension validation via Cloudinary.
+            </p>
+          </div>
+
+          {/* Tile 5 (4 cols): Lost & Found Upcoming Module */}
+          <div
+            id="lost-and-found"
+            className="lg:col-span-4 rounded-2xl border border-[#27272A] bg-[#111113] p-6 surface-specular transition-colors hover:border-[#3F3F46]"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#F59E0B]/30 bg-[#F59E0B]/12 text-[#FBBF24]">
+                <Search className="h-4 w-4" aria-hidden="true" />
+              </span>
+              <Badge variant="warning" className="gap-1">
+                <Clock className="h-3 w-3" aria-hidden="true" />
+                <span>Coming Soon</span>
+              </Badge>
+            </div>
+
+            <h3 className="mt-4 font-heading text-base font-semibold text-[#FAFAFA]">
+              Lost &amp; Found Recovery
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-[#A1A1AA]">
+              Structured lost &amp; found reporting with private ownership claim
+              workflows and owner handover review is planned for the upcoming
+              release.
+            </p>
+          </div>
         </div>
       </div>
     </section>

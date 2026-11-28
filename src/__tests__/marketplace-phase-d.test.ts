@@ -475,7 +475,7 @@ describe("Public /marketplace/[id] page & gallery", () => {
     expect(notFoundHtml).toContain('href="/marketplace"');
   });
 
-  it("renders public details, gallery, seller initials without private fields, and coming-soon Contact Seller", async () => {
+  it("renders public details, gallery, seller initials without private fields, and sign-in Contact Seller link for guests", async () => {
     vi.mocked(getCurrentUser).mockResolvedValueOnce(null);
     vi.mocked(prisma.listing.findFirst).mockResolvedValueOnce(
       makeDbListingRow({
@@ -508,7 +508,10 @@ describe("Public /marketplace/[id] page & gallery", () => {
     expect(html).toContain("North Campus Library");
     expect(html).toContain("Ananya Rao");
     expect(html).toContain("AR");
-    expect(html).toContain("Contact Seller — Coming Soon");
+    expect(html).toContain("Sign in to contact seller");
+    expect(html).toContain(
+      'href="/login?redirectTo=%2Fmarketplace%2Fcm1abc1234567890"'
+    );
     expect(html).toContain("View photo 2 of 2");
     expect(html).not.toContain('href="/marketplace/cm1abc1234567890/edit"');
     // Privacy guards: private fields never appear
@@ -536,7 +539,8 @@ describe("Public /marketplace/[id] page & gallery", () => {
       'href="/marketplace/cm1abc1234567890/edit"'
     );
     expect(ownerActiveHtml).toContain("Edit Listing");
-    expect(ownerActiveHtml).not.toContain("Contact Seller — Coming Soon");
+    expect(ownerActiveHtml).not.toContain("Sign in to contact seller");
+    expect(ownerActiveHtml).not.toContain("Request Contact");
 
     // Visitor viewing SOLD listing
     vi.mocked(getCurrentUser).mockResolvedValueOnce(null);

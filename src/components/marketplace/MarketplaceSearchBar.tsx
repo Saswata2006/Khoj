@@ -152,10 +152,10 @@ export function MarketplaceSearchBar({
           </label>
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#71717A]"
           >
             {isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin text-accent" />
+              <Loader2 className="h-4 w-4 animate-spin text-[#10B981]" />
             ) : (
               <Search className="h-4 w-4" />
             )}
@@ -175,7 +175,7 @@ export function MarketplaceSearchBar({
               displayedError ? "marketplace-search-error" : undefined
             }
             placeholder="Search items by title or description (e.g., calculator, DBMS, cycle)..."
-            className="h-10 w-full bg-card pl-9 pr-10 text-sm"
+            className="h-10 w-full bg-[#111113] pl-9 pr-10 text-sm"
           />
 
           {inputValue.length > 0 && (
@@ -183,7 +183,7 @@ export function MarketplaceSearchBar({
               type="button"
               onClick={handleClear}
               aria-label="Clear search query"
-              className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-7 w-7 items-center justify-center rounded-md text-[#A1A1AA] transition-colors hover:bg-[#1C1C20] hover:text-[#FAFAFA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981]"
             >
               <X className="h-4 w-4" aria-hidden="true" />
             </button>
@@ -193,11 +193,12 @@ export function MarketplaceSearchBar({
         <div className="flex items-center gap-2 shrink-0">
           <Button
             type="submit"
+            variant="accent"
             size="lg"
             disabled={isPending && inputValue.trim() === appliedQ}
-            className="h-10 w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90 px-5 font-medium"
+            className="h-10 w-full sm:w-auto px-5"
           >
-            <Search className="h-4 w-4 mr-1.5" aria-hidden="true" />
+            <Search className="h-4 w-4" aria-hidden="true" />
             <span>Search</span>
           </Button>
         </div>
@@ -207,14 +208,14 @@ export function MarketplaceSearchBar({
         <p
           id="marketplace-search-error"
           role="alert"
-          className="text-xs font-medium text-destructive"
+          className="text-xs font-medium text-[#FCA5A5]"
         >
           {displayedError}
         </p>
       )}
 
       {isPending && (
-        <p aria-live="polite" className="text-xs text-muted-foreground">
+        <p aria-live="polite" className="text-xs text-[#A1A1AA]">
           Updating marketplace results...
         </p>
       )}

@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowLeft, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { getCurrentUser } from "@/lib/authorization";
 import { getCloudinaryPublicDeliveryPolicy } from "@/lib/cloudinary";
 import {
@@ -13,6 +13,7 @@ import { getUserMarketplaceListings } from "@/lib/services/listings";
 import { DEFAULT_MARKETPLACE_LIMIT } from "@/lib/validators/listing";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { WorkspaceShell } from "@/components/layout/WorkspaceShell";
 import { MyListingsManager } from "@/components/marketplace/MyListingsManager";
 import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -73,6 +74,7 @@ async function MyListingsContent({ searchParams }: MyListingsPageProps) {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <Navbar
+        activePath="/dashboard/listings"
         initialUser={{
           id: user.id,
           name: user.name,
@@ -81,45 +83,46 @@ async function MyListingsContent({ searchParams }: MyListingsPageProps) {
         }}
       />
 
-      <main className="flex-1 mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            <span>Back to dashboard</span>
-          </Link>
+      <main className="flex-1">
+        <WorkspaceShell
+          active="listings"
+          user={{
+            name: user.name,
+            email: user.email,
+            role: user.role ?? undefined,
+          }}
+        >
+          <div className="flex flex-col gap-4 rounded-2xl border border-[#27272A] bg-[#111113] p-6 sm:flex-row sm:items-center sm:justify-between surface-specular">
+            <div className="space-y-1.5">
+              <h1 className="font-heading text-section-heading text-[#FAFAFA]">
+                My Marketplace Listings
+              </h1>
+              <p className="text-sm text-[#A1A1AA]">
+                View, edit, mark as sold, or remove your marketplace items.
+              </p>
+            </div>
 
-          <Link
-            href="/marketplace/create"
-            className={cn(
-              buttonVariants({ size: "sm" }),
-              "bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1.5"
-            )}
-          >
-            <Plus className="h-3.5 w-3.5" />
-            <span>Sell an Item</span>
-          </Link>
-        </div>
+            <Link
+              href="/marketplace/create"
+              className={cn(
+                buttonVariants({ variant: "accent", size: "default" }),
+                "w-fit inline-flex items-center gap-1.5"
+              )}
+            >
+              <Plus className="h-4 w-4" />
+              <span>Sell an Item</span>
+            </Link>
+          </div>
 
-        <div className="space-y-1">
-          <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-            My Marketplace Listings
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            View, edit, mark as sold, or remove your marketplace items.
-          </p>
-        </div>
-
-        <MyListingsManager
-          key={managerKey}
-          initialListings={rows}
-          initialPagination={pagination}
-          activeStatusFilter={status}
-          initialError={loadError}
-          deliveryPolicy={deliveryPolicy}
-        />
+          <MyListingsManager
+            key={managerKey}
+            initialListings={rows}
+            initialPagination={pagination}
+            activeStatusFilter={status}
+            initialError={loadError}
+            deliveryPolicy={deliveryPolicy}
+          />
+        </WorkspaceShell>
       </main>
 
       <Footer />
@@ -129,9 +132,8 @@ async function MyListingsContent({ searchParams }: MyListingsPageProps) {
 
 function MyListingsSkeleton() {
   return (
-    <div className="min-h-screen bg-background p-6 sm:p-10 max-w-6xl mx-auto space-y-6">
-      <Skeleton className="h-5 w-36" />
-      <Skeleton className="h-9 w-64" />
+    <div className="min-h-screen bg-background p-6 sm:p-10 max-w-7xl mx-auto space-y-6">
+      <Skeleton className="h-24 w-full rounded-2xl" />
       <Skeleton className="h-12 w-full rounded-xl" />
       <div className="space-y-4">
         <Skeleton className="h-28 w-full rounded-xl" />

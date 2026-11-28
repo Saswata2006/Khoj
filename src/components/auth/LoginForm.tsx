@@ -3,7 +3,7 @@
 import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Loader2, Mail, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Mail, ShieldCheck } from "lucide-react";
 import { sendOtp } from "@/lib/auth-client";
 import {
   isValidEmailInput,
@@ -40,16 +40,18 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
     getServerNullSnapshot
   );
   const [emailInput, setEmailInput] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const email = emailInput ?? pendingEmail ?? "";
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError(null);
+    if (isSubmitting) return;
 
+    setError(null);
     const normalized = normalizeEmailInput(email);
+
     if (!isValidEmailInput(normalized)) {
       setError("Please enter a valid email address.");
       return;
@@ -79,44 +81,44 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
       <div>
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-[#A1A1AA] hover:text-[#FAFAFA] transition-colors"
         >
-          <ArrowLeft className="h-3.5 w-3.5" />
+          <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
           <span>Back to home</span>
         </Link>
       </div>
 
-      <Card className="shadow-sm border-border bg-card py-6">
-        <CardHeader className="px-6 space-y-2">
+      <Card className="border-[#27272A] bg-[#111113] shadow-xl py-6">
+        <CardHeader className="px-6 space-y-2.5">
           <div className="flex items-center justify-between gap-2">
-            <Badge
-              variant="secondary"
-              className="bg-emerald-500/10 text-emerald-700 border-emerald-500/20 text-[11px] font-medium"
-            >
-              <ShieldCheck className="h-3 w-3 mr-1 text-accent" />
-              Passwordless Sign-In
+            <Badge variant="accent" className="gap-1.5">
+              <ShieldCheck className="h-3 w-3" aria-hidden="true" />
+              <span>Passwordless Sign-In</span>
             </Badge>
           </div>
-          <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
+          <CardTitle className="font-heading text-2xl font-semibold tracking-tight text-[#FAFAFA]">
             Sign in to Khoj
           </CardTitle>
-          <CardDescription className="text-sm text-muted-foreground leading-relaxed">
+          <CardDescription className="text-sm text-[#A1A1AA] leading-relaxed">
             Enter any personal or institutional email address. We&apos;ll send a
             6-digit one-time code &mdash; no password needed.
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="px-6">
+        <CardContent className="px-6 pt-1">
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <label
                 htmlFor="login-email"
-                className="block text-sm font-medium text-foreground"
+                className="block text-sm font-medium text-[#FAFAFA]"
               >
                 Email address
               </label>
               <div className="relative">
-                <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Mail
+                  className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#71717A]"
+                  aria-hidden="true"
+                />
                 <Input
                   id="login-email"
                   name="email"
@@ -132,43 +134,51 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
                   }}
                   placeholder="you@example.com"
                   aria-invalid={Boolean(error) || undefined}
-                  aria-describedby={error ? "login-email-error" : undefined}
-                  className="h-10 pl-9 bg-card"
+                  aria-describedby={error ? "login-email-error" : "login-email-hint"}
+                  className="h-10 pl-9"
                 />
               </div>
-            </div>
 
-            {error && (
-              <div
-                id="login-email-error"
-                role="alert"
-                className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive"
-              >
-                {error}
-              </div>
-            )}
+              {error ? (
+                <div
+                  id="login-email-error"
+                  role="alert"
+                  className="rounded-lg border border-[#EF4444]/30 bg-[#EF4444]/10 px-3 py-2 text-xs font-medium text-[#FCA5A5]"
+                >
+                  {error}
+                </div>
+              ) : (
+                <p id="login-email-hint" className="text-xs text-[#71717A]">
+                  We&apos;ll send a one-time code valid for 5 minutes.
+                </p>
+              )}
+            </div>
 
             <Button
               type="submit"
+              variant="accent"
               size="lg"
               disabled={isSubmitting || !email.trim()}
-              className="w-full h-10 bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+              className="w-full h-10"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
                   <span>Sending verification code...</span>
                 </>
               ) : (
-                <span>Send OTP</span>
+                <>
+                  <span>Send OTP</span>
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </>
               )}
             </Button>
           </form>
         </CardContent>
 
-        <Separator />
+        <Separator className="bg-[#27272A]" />
 
-        <CardFooter className="px-6 py-4 bg-muted/40 text-xs text-muted-foreground leading-relaxed">
+        <CardFooter className="px-6 py-4 bg-[#18181B]/60 text-xs text-[#A1A1AA] leading-relaxed">
           New to Khoj? Your account is created automatically once you verify
           your one-time code.
         </CardFooter>

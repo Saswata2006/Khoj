@@ -28,9 +28,9 @@ export function ListingGallery({
   const activeImage = images[safeIndex] ?? null;
 
   return (
-    <div className="space-y-3">
-      {/* Main Image Frame */}
-      <div className="relative aspect-4/3 w-full overflow-hidden rounded-xl border border-border bg-muted shadow-2xs">
+    <div className="space-y-3.5">
+      {/* Main Immersive Photo Frame */}
+      <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl border border-[#27272A] bg-[#141417] surface-specular">
         <MarketplaceImage
           key={activeImage?.imageUrl ?? "placeholder"}
           src={activeImage?.imageUrl}
@@ -46,8 +46,14 @@ export function ListingGallery({
         />
 
         {isSold && (
-          <div className="pointer-events-none absolute left-3 top-3 rounded-md bg-amber-500 px-3 py-1 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm">
+          <div className="pointer-events-none absolute left-3.5 top-3.5 rounded-full border border-[#F59E0B]/40 bg-[#F59E0B] px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#09090B] shadow-md">
             Sold
+          </div>
+        )}
+
+        {images.length > 1 && (
+          <div className="pointer-events-none absolute right-3.5 bottom-3.5 rounded-full border border-[#27272A] bg-[#09090B]/85 px-2.5 py-1 font-mono text-[11px] font-medium text-[#FAFAFA] backdrop-blur-md">
+            {safeIndex + 1} / {images.length}
           </div>
         )}
       </div>
@@ -69,10 +75,10 @@ export function ListingGallery({
                 aria-label={`View photo ${index + 1} of ${images.length}`}
                 aria-pressed={isActive}
                 className={cn(
-                  "relative aspect-square w-full overflow-hidden rounded-lg border bg-muted transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "relative aspect-square w-full overflow-hidden rounded-xl border bg-[#141417] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981]",
                   isActive
-                    ? "border-accent ring-2 ring-accent"
-                    : "border-border opacity-80 hover:opacity-100"
+                    ? "border-[#10B981] ring-2 ring-[#10B981]/50 opacity-100 scale-[1.01]"
+                    : "border-[#27272A] opacity-65 hover:opacity-100 hover:border-[#3F3F46]"
                 )}
               >
                 <MarketplaceImage

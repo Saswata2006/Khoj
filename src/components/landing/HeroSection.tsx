@@ -1,123 +1,114 @@
 import Link from "next/link";
-import { siteConfig } from "@/config/site";
+import { ArrowRight, Plus } from "lucide-react";
+import { HeroSearchForm } from "@/components/landing/HeroSearchForm";
+import { HeroShowcase } from "@/components/landing/HeroShowcase";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import {
-  ShoppingBag,
-  ShieldCheck,
-  MapPin,
-  FileCheck2,
-  ArrowRight,
-  Store,
-} from "lucide-react";
+
+const QUICK_CATEGORIES = [
+  { label: "Books & Study", href: "/marketplace?category=BOOKS" },
+  { label: "Electronics", href: "/marketplace?category=ELECTRONICS" },
+  { label: "Cycles", href: "/marketplace?category=CYCLES" },
+  { label: "Accessories", href: "/marketplace?category=ACCESSORIES" },
+  { label: "Stationery", href: "/marketplace?category=STATIONERY" },
+];
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-24">
-      {/* Background Decorative Accents */}
-      <div className="absolute inset-0 -z-10 pointer-events-none flex items-center justify-center">
-        <div className="h-[320px] w-[320px] sm:h-[480px] sm:w-[480px] rounded-full bg-emerald-500/5 blur-3xl" />
-        <div className="h-[240px] w-[240px] sm:h-[360px] sm:w-[360px] rounded-full bg-slate-900/5 blur-2xl" />
-      </div>
+    <section className="relative overflow-hidden border-b border-[#27272A] bg-[#09090B]">
+      {/* Architectural Grid + Subtle Emerald Vignette */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-khoj-grid opacity-30 [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_72%)]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-40 left-1/2 h-96 w-[50rem] -translate-x-1/2 rounded-full bg-[#10B981]/10 blur-3xl"
+      />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-        {/* Status Pill */}
-        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3.5 py-1 text-xs font-semibold text-emerald-800 shadow-xs mb-6">
-          <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-          <span>Community Marketplace &bull; Email-Verified Accounts</span>
-        </div>
-
-        {/* Hero Headline */}
-        <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground max-w-4xl mx-auto leading-[1.12]">
-          <span className="text-primary">{siteConfig.name}</span>
-          <span className="text-accent ml-2">&mdash;</span>{" "}
-          <span className="block mt-1 sm:inline sm:mt-0 text-foreground">
-            {siteConfig.tagline}
-          </span>
-        </h1>
-
-        {/* Subtitle */}
-        <p className="mt-5 text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          A community marketplace to buy and sell pre-owned items, report lost
-          belongings, and reconnect people with what matters.
-        </p>
-
-        {/* CTA Buttons */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-lg mx-auto">
-          <Link
-            href="/login"
-            className={cn(
-              buttonVariants({ size: "lg" }),
-              "w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-semibold h-11 px-6 shadow-sm"
-            )}
-          >
-            <span>Get Started with Email OTP</span>
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
-
-          <Link
-            href="/marketplace"
-            className={cn(
-              buttonVariants({ variant: "outline", size: "lg" }),
-              "w-full sm:w-auto border-border text-foreground text-sm font-semibold h-11 px-6"
-            )}
-          >
-            <ShoppingBag className="mr-2 h-4 w-4 text-accent" />
-            <span>Browse Marketplace</span>
-          </Link>
-        </div>
-
-        {/* Secondary anchor */}
-        <div className="mt-4">
-          <a
-            href="#how-it-works"
-            className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <span>See how Khoj works for local &amp; campus communities</span>
-            <ArrowRight className="h-3 w-3" />
-          </a>
-        </div>
-
-        {/* Key Highlights Ribbon */}
-        <div className="mt-14 pt-10 border-t border-border/80 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto text-left">
-          <div className="p-4 rounded-lg bg-card border border-border/60 shadow-2xs">
-            <div className="flex items-center gap-2 text-primary font-bold text-base sm:text-lg">
-              <ShieldCheck className="h-5 w-5 text-accent shrink-0" />
-              <span>Email-Verified Accounts</span>
+      <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-12 sm:px-6 sm:pb-24 sm:pt-18 lg:px-8 lg:pb-28 lg:pt-20">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-center lg:gap-10">
+          {/* Editorial Column */}
+          <div className="lg:col-span-7 space-y-7">
+            <div className="animate-khoj-enter inline-flex items-center gap-2 rounded-full border border-[#27272A] bg-[#111113] px-3 py-1 text-xs font-medium text-[#A1A1AA] surface-specular">
+              <span
+                className="h-1.5 w-1.5 rounded-full bg-[#10B981]"
+                aria-hidden="true"
+              />
+              <span>Verified Peer Marketplace &amp; Item Recovery</span>
             </div>
-            <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-              Passwordless 6-digit email OTP sign-in open to any valid email address
-            </p>
+
+            <div className="animate-khoj-stagger-1 space-y-5">
+              <h1 className="font-heading text-display-hero text-[#FAFAFA]">
+                <span>Find it. Sell it. </span>
+                <span className="bg-gradient-to-r from-[#FAFAFA] via-[#D1FAE5] to-[#34D399] bg-clip-text text-transparent">
+                  Reclaim it.
+                </span>
+              </h1>
+              <p className="max-w-xl text-base leading-relaxed text-[#A1A1AA] sm:text-lg">
+                A dedicated community marketplace for textbooks, gadgets, cycles,
+                and everyday essentials—built around clear discovery and safe
+                in-person meetups.
+              </p>
+            </div>
+
+            {/* Search & Real Category Filter Shortcuts */}
+            <div className="animate-khoj-stagger-2 max-w-xl space-y-3.5">
+              <HeroSearchForm />
+
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="mr-1 font-mono text-[10px] uppercase tracking-widest text-[#71717A]">
+                  Popular:
+                </span>
+                {QUICK_CATEGORIES.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="rounded-full border border-[#27272A] bg-[#111113] px-3 py-1 text-xs text-[#A1A1AA] transition-colors hover:border-[#3F3F46] hover:bg-[#18181B] hover:text-[#FAFAFA]"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Action Hierarchy */}
+            <div className="animate-khoj-stagger-3 flex flex-wrap items-center gap-3 pt-1">
+              <Link
+                href="/marketplace"
+                className={cn(
+                  buttonVariants({ variant: "accent", size: "lg" }),
+                  "h-11 px-6"
+                )}
+              >
+                <span>Browse Marketplace</span>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+              <Link
+                href="/marketplace/create"
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "lg" }),
+                  "h-11 px-5"
+                )}
+              >
+                <Plus className="h-4 w-4 text-[#10B981]" aria-hidden="true" />
+                <span>Sell an Item</span>
+              </Link>
+              <Link
+                href="/login"
+                className={cn(
+                  buttonVariants({ variant: "ghost", size: "lg" }),
+                  "h-11 px-4 text-[#A1A1AA] hover:text-[#FAFAFA]"
+                )}
+              >
+                <span>Sign In</span>
+              </Link>
+            </div>
           </div>
 
-          <div className="p-4 rounded-lg bg-card border border-border/60 shadow-2xs">
-            <div className="flex items-center gap-2 text-primary font-bold text-base sm:text-lg">
-              <Store className="h-5 w-5 text-accent shrink-0" />
-              <span>Community Marketplace</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-              Browse and list pre-owned essentials directly with email-verified accounts
-            </p>
-          </div>
-
-          <div className="p-4 rounded-lg bg-card border border-border/60 shadow-2xs">
-            <div className="flex items-center gap-2 text-primary font-bold text-base sm:text-lg">
-              <MapPin className="h-5 w-5 text-accent shrink-0" />
-              <span>Local Meetups</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-              Arrange convenient in-person handoffs in your neighborhood or campus
-            </p>
-          </div>
-
-          <div className="p-4 rounded-lg bg-card border border-border/60 shadow-2xs">
-            <div className="flex items-center gap-2 text-primary font-bold text-base sm:text-lg">
-              <FileCheck2 className="h-5 w-5 text-primary shrink-0" />
-              <span>Ownership Claims</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-              Structured claim details to help return lost items to rightful owners (Coming Soon)
-            </p>
+          {/* Right Conceptual Marketplace Artwork */}
+          <div className="lg:col-span-5">
+            <HeroShowcase />
           </div>
         </div>
       </div>

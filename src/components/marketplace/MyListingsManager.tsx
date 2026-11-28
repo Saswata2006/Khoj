@@ -148,7 +148,7 @@ export function MyListingsManager({
       {/* Status Tabs */}
       <nav
         aria-label="Filter your listings by status"
-        className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-2 shadow-2xs"
+        className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#27272A] bg-[#111113] p-2"
       >
         <div className="flex flex-wrap items-center gap-1.5">
           {STATUS_TABS.map((tab) => {
@@ -159,10 +159,10 @@ export function MyListingsManager({
                 href={buildMyListingsHref({ status: tab.value })}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "rounded-lg px-3.5 py-1.5 text-xs font-medium transition-colors",
+                  "rounded-lg border px-3.5 py-1.5 text-xs font-medium transition-colors",
                   isActive
-                    ? "bg-primary text-primary-foreground shadow-2xs"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "border-[#10B981]/35 bg-[#10B981]/12 text-[#34D399]"
+                    : "border-transparent text-[#A1A1AA] hover:bg-[#18181B] hover:text-[#FAFAFA]"
                 )}
               >
                 {tab.label}
@@ -171,7 +171,7 @@ export function MyListingsManager({
           })}
         </div>
 
-        <span className="px-2 text-xs text-muted-foreground">
+        <span className="px-2 font-mono text-xs text-[#A1A1AA]">
           {totalCount} {totalCount === 1 ? "listing" : "listings"}
         </span>
       </nav>
@@ -180,9 +180,9 @@ export function MyListingsManager({
       {initialError && (
         <div
           role="alert"
-          className="flex items-start gap-2.5 rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-xs font-medium text-destructive"
+          className="flex items-start gap-2.5 rounded-xl border border-[#EF4444]/30 bg-[#EF4444]/10 p-4 text-xs font-medium text-[#FCA5A5]"
         >
-          <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+          <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-[#EF4444]" />
           <span>{initialError}</span>
         </div>
       )}
@@ -191,10 +191,10 @@ export function MyListingsManager({
       {mutationError && (
         <div
           role="alert"
-          className="flex items-center justify-between gap-3 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-xs font-medium text-destructive"
+          className="flex items-center justify-between gap-3 rounded-xl border border-[#EF4444]/30 bg-[#EF4444]/10 px-4 py-3 text-xs font-medium text-[#FCA5A5]"
         >
           <div className="flex items-start gap-2">
-            <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+            <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-[#EF4444]" />
             <span>{mutationError}</span>
           </div>
           <Button
@@ -211,27 +211,27 @@ export function MyListingsManager({
       {mutationSuccess && (
         <div
           role="status"
-          className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-xs font-medium text-emerald-800"
+          className="flex items-center gap-2 rounded-xl border border-[#10B981]/30 bg-[#10B981]/10 px-4 py-3 text-xs font-medium text-[#34D399]"
         >
-          <CheckCircle2 className="h-4 w-4 shrink-0 text-accent" />
+          <CheckCircle2 className="h-4 w-4 shrink-0 text-[#10B981]" />
           <span>{mutationSuccess}</span>
         </div>
       )}
 
       {/* Empty State */}
       {!initialError && listings.length === 0 && (
-        <Card className="border-dashed border-border bg-card py-10">
+        <Card className="border-dashed border-[#27272A] bg-[#111113] py-10">
           <CardContent className="text-center space-y-4">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-[#27272A] bg-[#18181B] text-[#A1A1AA]">
               <Package className="h-6 w-6" />
             </div>
             <div className="space-y-1.5 max-w-md mx-auto">
-              <h2 className="font-heading text-lg font-semibold text-foreground">
+              <h2 className="font-heading text-lg font-semibold text-[#FAFAFA]">
                 {activeStatusFilter
                   ? `No ${getListingStatusLabel(activeStatusFilter).toLowerCase()} listings`
                   : "You haven't posted any listings yet"}
               </h2>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-xs text-[#A1A1AA] leading-relaxed">
                 {activeStatusFilter
                   ? `You do not have any ${getListingStatusLabel(activeStatusFilter).toLowerCase()} marketplace listings matching this view.`
                   : "List pre-owned books, gadgets, cycles, or everyday essentials for sale."}
@@ -249,8 +249,8 @@ export function MyListingsManager({
               <Link
                 href="/marketplace/create"
                 className={cn(
-                  buttonVariants({ size: "sm" }),
-                  "bg-primary text-primary-foreground inline-flex items-center gap-1.5"
+                  buttonVariants({ variant: "accent", size: "sm" }),
+                  "inline-flex items-center gap-1.5"
                 )}
               >
                 <Plus className="h-4 w-4" />
@@ -263,7 +263,7 @@ export function MyListingsManager({
 
       {/* Owned Listings List */}
       {!initialError && listings.length > 0 && (
-        <div className="space-y-4">
+        <div className="space-y-3.5">
           {listings.map((listing) => {
             const primaryImage = listing.images[0] ?? null;
             const isActive = listing.status === "ACTIVE";
@@ -274,12 +274,12 @@ export function MyListingsManager({
             return (
               <Card
                 key={listing.id}
-                className="border-border bg-card shadow-2xs py-4 overflow-hidden"
+                className="border-[#27272A] bg-[#111113] transition-colors hover:border-[#3F3F46] py-4 overflow-hidden"
               >
                 <CardContent className="px-4 sm:px-6 flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
                   {/* Thumbnail + Listing Summary */}
                   <div className="flex items-start gap-4 min-w-0">
-                    <div className="relative h-20 w-24 sm:h-24 sm:w-28 shrink-0 overflow-hidden rounded-lg border border-border bg-muted">
+                    <div className="relative h-20 w-24 sm:h-24 sm:w-28 shrink-0 overflow-hidden rounded-lg border border-[#27272A] bg-[#18181B]">
                       <MarketplaceImage
                         src={primaryImage?.imageUrl}
                         alt={listing.title}
@@ -292,27 +292,27 @@ export function MyListingsManager({
                     <div className="min-w-0 space-y-1.5">
                       <div className="flex flex-wrap items-center gap-2">
                         <Badge
-                          variant="secondary"
-                          className={cn(
-                            "text-[11px] font-semibold",
-                            isActive && "bg-emerald-500/15 text-emerald-800",
-                            isSold && "bg-amber-500/20 text-amber-900",
-                            isRemoved && "bg-muted text-muted-foreground"
-                          )}
+                          variant={
+                            isActive
+                              ? "accent"
+                              : isSold
+                                ? "warning"
+                                : "secondary"
+                          }
                         >
                           {getListingStatusLabel(listing.status)}
                         </Badge>
-                        <Badge variant="outline" className="text-[11px]">
+                        <Badge variant="outline">
                           {getCategoryLabel(listing.category)}
                         </Badge>
                       </div>
 
-                      <h2 className="font-heading text-base font-semibold text-foreground truncate">
+                      <h2 className="font-heading text-base font-semibold text-[#FAFAFA] truncate">
                         {listing.title}
                       </h2>
 
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                        <span className="font-semibold text-primary text-sm">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[#A1A1AA]">
+                        <span className="font-semibold text-[#34D399] text-sm">
                           {formatMarketplacePrice(listing.price)}
                         </span>
                         <span>&bull;</span>
@@ -352,7 +352,7 @@ export function MyListingsManager({
                     {isActive && (
                       <Button
                         type="button"
-                        variant="secondary"
+                        variant="outline"
                         size="sm"
                         disabled={Boolean(mutatingListingId)}
                         onClick={() =>
@@ -362,7 +362,7 @@ export function MyListingsManager({
                             title: listing.title,
                           })
                         }
-                        className="inline-flex items-center gap-1.5 text-xs bg-amber-500/15 text-amber-900 hover:bg-amber-500/25"
+                        className="inline-flex items-center gap-1.5 text-xs border-[#F59E0B]/30 bg-[#F59E0B]/10 text-[#FCD34D] hover:bg-[#F59E0B]/20"
                       >
                         {isRowBusy &&
                         pendingAction?.type === "mark_sold" ? (
@@ -377,7 +377,7 @@ export function MyListingsManager({
                     {!isRemoved && (
                       <Button
                         type="button"
-                        variant="outline"
+                        variant="destructive"
                         size="sm"
                         disabled={Boolean(mutatingListingId)}
                         onClick={() =>
@@ -387,7 +387,7 @@ export function MyListingsManager({
                             title: listing.title,
                           })
                         }
-                        className="inline-flex items-center gap-1.5 text-xs border-destructive/30 text-destructive hover:bg-destructive/10"
+                        className="inline-flex items-center gap-1.5 text-xs"
                       >
                         {isRowBusy && pendingAction?.type === "remove" ? (
                           <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -487,17 +487,17 @@ export function MyListingsManager({
           aria-modal="true"
           aria-labelledby="confirm-listing-action-title"
           aria-describedby="confirm-listing-action-description"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-xs"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-xs"
         >
-          <Card className="w-full max-w-md border-border bg-card shadow-lg py-6">
+          <Card className="w-full max-w-md border-[#27272A] bg-[#18181B] shadow-2xl py-6">
             <CardContent className="px-6 space-y-4">
               <div className="flex items-start gap-3">
                 <div
                   className={cn(
-                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-full",
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border",
                     pendingAction.type === "remove"
-                      ? "bg-destructive/10 text-destructive"
-                      : "bg-amber-500/15 text-amber-700"
+                      ? "border-[#EF4444]/30 bg-[#EF4444]/15 text-[#FCA5A5]"
+                      : "border-[#F59E0B]/30 bg-[#F59E0B]/15 text-[#FBBF24]"
                   )}
                 >
                   <AlertTriangle className="h-5 w-5" />
@@ -505,7 +505,7 @@ export function MyListingsManager({
                 <div className="space-y-1">
                   <h3
                     id="confirm-listing-action-title"
-                    className="font-heading text-base font-bold text-foreground"
+                    className="font-heading text-base font-semibold text-[#FAFAFA]"
                   >
                     {pendingAction.type === "mark_sold"
                       ? "Mark listing as Sold?"
@@ -513,7 +513,7 @@ export function MyListingsManager({
                   </h3>
                   <p
                     id="confirm-listing-action-description"
-                    className="text-xs leading-relaxed text-muted-foreground"
+                    className="text-xs leading-relaxed text-[#A1A1AA]"
                   >
                     {pendingAction.type === "mark_sold"
                       ? `Marking "${pendingAction.title}" as Sold marks it unavailable to buyers and locks further edits.`
@@ -535,16 +535,12 @@ export function MyListingsManager({
                 <Button
                   type="button"
                   variant={
-                    pendingAction.type === "remove" ? "destructive" : "default"
+                    pendingAction.type === "remove" ? "destructive" : "accent"
                   }
                   size="sm"
                   disabled={Boolean(mutatingListingId)}
                   onClick={handleConfirmMutation}
-                  className={cn(
-                    "inline-flex items-center gap-1.5",
-                    pendingAction.type === "mark_sold" &&
-                      "bg-primary text-primary-foreground"
-                  )}
+                  className="inline-flex items-center gap-1.5"
                 >
                   {mutatingListingId && (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />

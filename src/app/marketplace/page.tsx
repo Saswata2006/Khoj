@@ -43,6 +43,7 @@ async function MarketplaceContent({ searchParams }: MarketplacePageProps) {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <Navbar
+        activePath="/marketplace"
         initialUser={
           user
             ? {
@@ -56,31 +57,32 @@ async function MarketplaceContent({ searchParams }: MarketplacePageProps) {
       />
 
       <main className="flex-1 mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
-        {/* Header & Primary Action */}
-        <section className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6 shadow-xs sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-1.5">
+        {/* Catalog Header & Primary Action */}
+        <section className="relative overflow-hidden flex flex-col gap-4 rounded-2xl border border-[#27272A] bg-[#111113] p-6 sm:flex-row sm:items-center sm:justify-between surface-specular">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-24 -top-24 h-56 w-56 rounded-full bg-[#10B981]/8 blur-3xl"
+          />
+          <div className="relative space-y-2">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge
-                variant="secondary"
-                className="bg-emerald-500/10 text-emerald-700 border-emerald-500/20 text-xs font-medium inline-flex items-center gap-1"
-              >
-                <ShoppingBag className="h-3 w-3 text-accent" />
+              <Badge variant="accent" className="gap-1.5">
+                <ShoppingBag className="h-3 w-3" aria-hidden="true" />
                 <span>Community Marketplace</span>
               </Badge>
               {data && (
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="font-mono text-[11px]">
                   {data.pagination.total}{" "}
                   {data.pagination.total === 1 ? "active item" : "active items"}
                 </Badge>
               )}
             </div>
 
-            <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            <h1 className="font-heading text-section-heading text-[#FAFAFA]">
               Browse Marketplace
             </h1>
-            <p className="text-sm text-muted-foreground max-w-2xl">
+            <p className="text-sm text-[#A1A1AA] max-w-2xl">
               Discover pre-owned books, electronics, cycles, and everyday
-              essentials listed by verified community members.
+              essentials listed by community sellers.
             </p>
           </div>
 
@@ -100,8 +102,8 @@ async function MarketplaceContent({ searchParams }: MarketplacePageProps) {
             <Link
               href="/marketplace/create"
               className={cn(
-                buttonVariants({ size: "default" }),
-                "bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1.5 font-medium"
+                buttonVariants({ variant: "accent", size: "default" }),
+                "inline-flex items-center gap-1.5"
               )}
             >
               <Plus className="h-4 w-4" />

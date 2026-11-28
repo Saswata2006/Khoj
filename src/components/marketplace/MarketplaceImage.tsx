@@ -23,7 +23,7 @@ export interface MarketplaceImageProps {
 /**
  * Renders a responsive Cloudinary marketplace photo via `next/image` using
  * `remotePatterns` and optional configured-account/environment constraints,
- * falling back to a consistent placeholder when missing, disallowed, or broken.
+ * falling back to an editorial dark missing-image frame when absent or broken.
  */
 export function MarketplaceImage({
   src,
@@ -46,12 +46,20 @@ export function MarketplaceImage({
         role="img"
         aria-label={alt || placeholderLabel}
         className={cn(
-          "flex h-full w-full flex-col items-center justify-center gap-1.5 bg-muted/70 px-3 text-center text-muted-foreground",
+          "relative flex h-full w-full flex-col items-center justify-center gap-2 overflow-hidden bg-[#141417] px-3 text-center text-[#A1A1AA]",
           containerClassName
         )}
       >
-        <ImageOff className="h-6 w-6 opacity-60" aria-hidden="true" />
-        <span className="text-[11px] font-medium">{placeholderLabel}</span>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-khoj-dots opacity-45"
+        />
+        <span className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-[#27272A] bg-[#18181B] text-[#71717A]">
+          <ImageOff className="h-4.5 w-4.5" aria-hidden="true" />
+        </span>
+        <span className="relative text-[11px] font-medium text-[#71717A]">
+          {placeholderLabel}
+        </span>
       </div>
     );
   }

@@ -127,7 +127,14 @@ export async function getDashboardSummary(
     getSafeUserProfile(userId),
     prisma.listing.count({ where: { userId } }),
     prisma.claim.count({ where: { claimantId: userId } }),
-    prisma.contactRequest.count({ where: { requesterId: userId } }),
+    prisma.contactRequest.count({
+      where: {
+        OR: [
+          { requesterId: userId },
+          { listing: { userId, type: "SALE" } },
+        ],
+      },
+    }),
   ]);
 
   if (!profile) return null;

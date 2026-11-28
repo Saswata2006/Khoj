@@ -375,24 +375,19 @@ export function CreateListingForm() {
   if (completed && createdListingId) {
     return (
       <div className="mx-auto max-w-2xl space-y-6">
-        <Card className="border-emerald-500/30 bg-card shadow-sm py-6">
+        <Card className="border-[#10B981]/30 bg-[#111113] py-6">
           <CardHeader className="px-6 space-y-2">
             <div className="flex items-center justify-between gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-500/10 text-accent">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#10B981]/30 bg-[#10B981]/12 text-[#34D399]">
                 <CheckCircle2 className="h-6 w-6" />
               </div>
-              <Badge
-                variant="secondary"
-                className="bg-emerald-500/15 text-emerald-700 font-medium"
-              >
-                Status: Active
-              </Badge>
+              <Badge variant="accent">Status: Active</Badge>
             </div>
-            <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
+            <CardTitle className="font-heading text-2xl font-semibold tracking-tight text-[#FAFAFA]">
               Listing published to Khoj Marketplace
             </CardTitle>
-            <CardDescription className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">{createdTitle}</span>{" "}
+            <CardDescription className="text-sm text-[#A1A1AA]">
+              <span className="font-medium text-[#FAFAFA]">{createdTitle}</span>{" "}
               is now saved and live with{" "}
               {uploadedImages.length === 1
                 ? "1 uploaded photo"
@@ -401,10 +396,10 @@ export function CreateListingForm() {
             </CardDescription>
           </CardHeader>
 
-          <Separator />
+          <Separator className="bg-[#27272A]" />
 
           <CardContent className="px-6 py-5 space-y-4">
-            <div className="rounded-lg border border-border bg-muted/40 p-4 text-xs text-muted-foreground leading-relaxed">
+            <div className="rounded-lg border border-[#27272A] bg-[#18181B]/70 p-4 text-xs text-[#A1A1AA] leading-relaxed">
               Your listing is active immediately. You can edit item details,
               adjust photos, mark it as sold later, or manage it from your edit
               workspace.
@@ -414,8 +409,8 @@ export function CreateListingForm() {
               <Link
                 href={`/marketplace/${createdListingId}`}
                 className={cn(
-                  buttonVariants({ size: "lg" }),
-                  "flex-1 bg-primary text-primary-foreground hover:bg-primary/90 font-medium inline-flex items-center justify-center gap-2"
+                  buttonVariants({ variant: "accent", size: "lg" }),
+                  "flex-1 inline-flex items-center justify-center gap-2"
                 )}
               >
                 <ExternalLink className="h-4 w-4" />
@@ -467,21 +462,18 @@ export function CreateListingForm() {
           <ArrowLeft className="h-3.5 w-3.5" />
           <span>Back to dashboard</span>
         </Link>
-        <Badge
-          variant="secondary"
-          className="bg-emerald-500/10 text-emerald-700 text-[11px] font-medium inline-flex items-center gap-1.5"
-        >
-          <ShoppingBag className="h-3 w-3 text-accent" />
+        <Badge variant="accent" className="gap-1.5">
+          <ShoppingBag className="h-3 w-3" />
           <span>Marketplace Sale Listing</span>
         </Badge>
       </div>
 
       {/* Page Title */}
-      <div className="space-y-1">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+      <div className="space-y-1.5">
+        <h1 className="font-heading text-2xl sm:text-3xl font-semibold tracking-tight text-[#FAFAFA]">
           Sell an item on Khoj
         </h1>
-        <p className="text-sm text-muted-foreground max-w-2xl">
+        <p className="text-sm text-[#A1A1AA] max-w-2xl">
           List textbooks, electronics, cycles, or everyday essentials for your
           community. Listings become active immediately upon publishing.
         </p>
@@ -491,16 +483,16 @@ export function CreateListingForm() {
       {!createdListingId && recoveredDraft && !dismissedRecovery && (
         <div
           role="status"
-          className="flex flex-col gap-3 rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-xs text-amber-900 sm:flex-row sm:items-center sm:justify-between"
+          className="flex flex-col gap-3 rounded-xl border border-[#F59E0B]/35 bg-[#F59E0B]/10 px-4 py-3 text-xs text-[#FCD34D] sm:flex-row sm:items-center sm:justify-between"
         >
           <div className="flex items-start gap-2.5">
-            <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
+            <AlertTriangle className="h-4 w-4 shrink-0 text-[#F59E0B] mt-0.5" />
             <div className="space-y-0.5">
-              <p className="font-semibold">
+              <p className="font-semibold text-[#FAFAFA]">
                 Previously created listing found from this session: &ldquo;
                 {recoveredDraft.title}&rdquo;
               </p>
-              <p className="text-amber-800/90">
+              <p className="text-[#FDE68A]/90">
                 Resume this saved Active listing to add remaining photos without
                 creating a duplicate post, or dismiss to start fresh.
               </p>
@@ -509,10 +501,9 @@ export function CreateListingForm() {
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <Button
               type="button"
-              variant="default"
+              variant="accent"
               size="xs"
               onClick={handleResumeRecoveredDraft}
-              className="bg-primary text-primary-foreground"
             >
               Resume Saved Listing
             </Button>
@@ -538,15 +529,15 @@ export function CreateListingForm() {
       {createdListingId && (
         <div
           role="status"
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-xs text-amber-900 dark:text-amber-200"
+          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-[#F59E0B]/35 bg-[#F59E0B]/10 px-4 py-3 text-xs text-[#FCD34D]"
         >
           <div className="flex items-start gap-2.5">
-            <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
+            <AlertTriangle className="h-4 w-4 shrink-0 text-[#F59E0B] mt-0.5" />
             <div className="space-y-0.5">
-              <p className="font-semibold">
+              <p className="font-semibold text-[#FAFAFA]">
                 Listing saved as Active — finish photo uploads below
               </p>
-              <p className="text-amber-800/90 dark:text-amber-200/80">
+              <p className="text-[#FDE68A]/90">
                 Retrying will upload only failed photos without creating a
                 duplicate listing.
               </p>
@@ -556,7 +547,7 @@ export function CreateListingForm() {
             href={`/marketplace/${createdListingId}/edit`}
             className={cn(
               buttonVariants({ variant: "outline", size: "xs" }),
-              "shrink-0 border-amber-600/30 bg-background/80"
+              "shrink-0"
             )}
           >
             Open Edit Page
@@ -592,8 +583,8 @@ export function CreateListingForm() {
           </CardContent>
         </Card>
 
-        {/* Right Column: Photos & Publish Actions */}
-        <div className="lg:col-span-5 space-y-6">
+        {/* Sticky Right Column: Photos & Publish Actions */}
+        <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-6">
           <Card className="border-border bg-card shadow-xs py-6">
             <CardContent className="px-6">
               <ListingImageUploader
@@ -630,10 +621,10 @@ export function CreateListingForm() {
             </CardHeader>
 
             <CardContent className="px-6 space-y-4">
-              <div className="flex items-start gap-2.5 rounded-lg border border-border bg-muted/40 p-3 text-xs text-muted-foreground leading-relaxed">
-                <Info className="h-4 w-4 shrink-0 text-accent mt-0.5" />
+              <div className="flex items-start gap-2.5 rounded-lg border border-[#27272A] bg-[#18181B]/70 p-3 text-xs text-[#A1A1AA] leading-relaxed">
+                <Info className="h-4 w-4 shrink-0 text-[#10B981] mt-0.5" />
                 <span>
-                  Publishing makes this listing <strong className="text-foreground">Active</strong>{" "}
+                  Publishing makes this listing <strong className="text-[#FAFAFA]">Active</strong>{" "}
                   right away (no draft mode). Only fixed prices in INR (₹) are
                   supported.
                 </span>
@@ -642,7 +633,7 @@ export function CreateListingForm() {
               {submitError && (
                 <div
                   role="alert"
-                  className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2.5 text-xs font-medium text-destructive space-y-2"
+                  className="rounded-lg border border-[#EF4444]/30 bg-[#EF4444]/10 px-3 py-2.5 text-xs font-medium text-[#FCA5A5] space-y-2"
                 >
                   <p>{submitError}</p>
                   {ambiguousNetworkError && (
@@ -659,9 +650,10 @@ export function CreateListingForm() {
               <div className="space-y-2.5">
                 <Button
                   type="submit"
+                  variant="accent"
                   size="lg"
                   disabled={isSubmitting}
-                  className="w-full h-11 bg-primary text-primary-foreground hover:bg-primary/90 font-medium inline-flex items-center justify-center gap-2"
+                  className="w-full h-11 inline-flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <>

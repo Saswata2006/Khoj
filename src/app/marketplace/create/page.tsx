@@ -22,6 +22,7 @@ async function CreateListingContent() {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <Navbar
+        activePath="/marketplace/create"
         initialUser={{
           id: user.id,
           name: user.name,

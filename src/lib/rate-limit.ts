@@ -19,6 +19,15 @@ export const IP_MAX_REQUESTS_PER_HOUR = 10;
 /** Maximum verification attempts per hour per IP address. */
 export const IP_MAX_VERIFY_PER_HOUR = 20;
 
+/** Maximum buyer-initiated contact requests per hour per user. */
+export const CONTACT_REQUEST_MAX_PER_HOUR = 10;
+
+/** Minimum seconds between contact requests sent by the same user. */
+export const CONTACT_REQUEST_COOLDOWN_SECONDS = 10;
+
+/** Maximum buyer-initiated contact requests per hour per IP address. */
+export const CONTACT_REQUEST_IP_MAX_PER_HOUR = 25;
+
 const HOURLY_WINDOW_SECONDS = 60 * 60;
 const MS_PER_SECOND = 1000;
 
@@ -211,6 +220,35 @@ export function createBetterAuthRateLimitStorage(): BetterAuthRateLimitStorage {
       };
     },
   };
+}
+
+/**
+ * Checks and enforces per-user contact request anti-spam rate limits atomically:
+ * - 10-second burst cooldown between requests
+ * - Maximum 10 contact requests per hour per authenticated user
+ */
+export async function checkContactRequestUserRateLimit(
+  userId: string
+): Promise<RateLimitResult> {
+  return consumeRateLimit(`contact:req:user:${userId}`, {
+    windowSeconds: HOURLY_WINDOW_SECONDS,
+    max: CONTACT_REQUEST_MAX_PER_HOUR,
+    cooldownSeconds: CONTACT_REQUEST_COOLDOWN_SECONDS,
+  });
+}
+
+/**
+ * Checks and enforces per-IP contact request anti-spam rate limits atomically:
+ * - Maximum 25 contact requests per hour per IP
+ */
+export async function checkContactRequestIpRateLimit(
+  ip: string | null | undefined
+): Promise<RateLimitResult> {
+  if (!ip) return { allowed: true, retryAfterSeconds: 0 };
+  return consumeRateLimit(`contact:req:ip:${ip}`, {
+    windowSeconds: HOURLY_WINDOW_SECONDS,
+    max: CONTACT_REQUEST_IP_MAX_PER_HOUR,
+  });
 }
 
 /**

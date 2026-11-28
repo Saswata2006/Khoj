@@ -110,20 +110,17 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
           <ArrowLeft className="h-3.5 w-3.5" />
           <span>Back to dashboard</span>
         </Link>
-        <Badge
-          variant="secondary"
-          className="text-[11px] font-medium bg-muted text-foreground"
-        >
+        <Badge variant="outline" className="font-mono text-[11px]">
           Role: {initialProfile.role}
         </Badge>
       </div>
 
-      <Card className="shadow-sm border-border bg-card py-6">
+      <Card className="border-[#27272A] bg-[#111113] py-6">
         <CardHeader className="px-6 space-y-1.5">
-          <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
+          <CardTitle className="font-heading text-2xl font-semibold tracking-tight text-[#FAFAFA]">
             Profile settings
           </CardTitle>
-          <CardDescription className="text-sm text-muted-foreground">
+          <CardDescription className="text-sm text-[#A1A1AA]">
             Keep your display name and meetup location up to date for safe
             community exchanges.
           </CardDescription>
@@ -136,19 +133,19 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="profile-email"
-                  className="block text-sm font-medium text-foreground"
+                  className="block text-sm font-medium text-[#FAFAFA]"
                 >
                   Email address
                 </label>
                 {initialProfile.emailVerified && (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700">
-                    <ShieldCheck className="h-3.5 w-3.5 text-accent" />
+                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#34D399]">
+                    <ShieldCheck className="h-3.5 w-3.5 text-[#10B981]" />
                     Verified
                   </span>
                 )}
               </div>
               <div className="relative">
-                <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#71717A]" />
                 <Input
                   id="profile-email"
                   type="email"
@@ -156,26 +153,26 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
                   readOnly
                   disabled
                   aria-readonly="true"
-                  className="h-10 pl-9 bg-muted/60 text-muted-foreground cursor-not-allowed"
+                  className="h-10 pl-9 bg-[#18181B] text-[#A1A1AA] cursor-not-allowed"
                 />
               </div>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-[11px] text-[#71717A]">
                 Your verified sign-in email cannot be changed.
               </p>
             </div>
 
-            <Separator />
+            <Separator className="bg-[#27272A]" />
 
             {/* Display Name */}
             <div className="space-y-1.5">
               <label
                 htmlFor="profile-name"
-                className="block text-sm font-medium text-foreground"
+                className="block text-sm font-medium text-[#FAFAFA]"
               >
-                Display name <span className="text-destructive">*</span>
+                Display name <span className="text-[#EF4444]">*</span>
               </label>
               <div className="relative">
-                <UserIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <UserIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#71717A]" />
                 <Input
                   id="profile-name"
                   name="name"
@@ -190,7 +187,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
                     if (successMessage) setSuccessMessage(null);
                   }}
                   placeholder="How should community members call you?"
-                  className="h-10 pl-9 bg-card"
+                  className="h-10 pl-9"
                 />
               </div>
             </div>
@@ -199,12 +196,12 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
             <div className="space-y-1.5">
               <label
                 htmlFor="profile-location"
-                className="block text-sm font-medium text-foreground"
+                className="block text-sm font-medium text-[#FAFAFA]"
               >
                 General location
               </label>
               <div className="relative">
-                <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#71717A]" />
                 <Input
                   id="profile-location"
                   name="location"
@@ -218,7 +215,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
                     if (successMessage) setSuccessMessage(null);
                   }}
                   placeholder="e.g., North Campus, Indiranagar, Powai"
-                  className="h-10 pl-9 bg-card"
+                  className="h-10 pl-9"
                 />
               </div>
             </div>
@@ -227,15 +224,15 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
             <div className="space-y-1.5">
               <label
                 htmlFor="profile-hostel"
-                className="block text-sm font-medium text-foreground"
+                className="block text-sm font-medium text-[#FAFAFA]"
               >
                 Hostel / campus block{" "}
-                <span className="text-xs font-normal text-muted-foreground">
+                <span className="text-xs font-normal text-[#71717A]">
                   (optional)
                 </span>
               </label>
               <div className="relative">
-                <Building2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Building2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#71717A]" />
                 <Input
                   id="profile-hostel"
                   name="hostelBlock"
@@ -250,7 +247,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
                     if (successMessage) setSuccessMessage(null);
                   }}
                   placeholder="e.g., Block A, Hostel 2, Day Scholar"
-                  className="h-10 pl-9 bg-card"
+                  className="h-10 pl-9"
                 />
                 <datalist id="khoj-hostel-suggestions">
                   {campusConfig.hostelBlocks.map((block) => (
@@ -263,7 +260,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
             {error && (
               <div
                 role="alert"
-                className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive"
+                className="rounded-lg border border-[#EF4444]/30 bg-[#EF4444]/10 px-3 py-2 text-xs font-medium text-[#FCA5A5]"
               >
                 {error}
               </div>
@@ -272,9 +269,9 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
             {successMessage && (
               <div
                 role="status"
-                className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs font-medium text-emerald-700"
+                className="flex items-center gap-2 rounded-lg border border-[#10B981]/30 bg-[#10B981]/10 px-3 py-2 text-xs font-medium text-[#34D399]"
               >
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-accent" />
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-[#10B981]" />
                 <span>{successMessage}</span>
               </div>
             )}
@@ -282,9 +279,10 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
             <div className="pt-2 flex items-center justify-end gap-3">
               <Button
                 type="submit"
+                variant="accent"
                 size="lg"
                 disabled={isSaving || !name.trim()}
-                className="h-10 px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+                className="h-10 px-6"
               >
                 {isSaving ? (
                   <>
@@ -299,9 +297,9 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
           </form>
         </CardContent>
 
-        <Separator />
+        <Separator className="bg-[#27272A]" />
 
-        <CardFooter className="px-6 py-4 bg-muted/40 text-xs text-muted-foreground">
+        <CardFooter className="px-6 py-4 bg-[#18181B]/60 text-xs text-[#A1A1AA]">
           Only your display name, general location, and optional campus block
           are shared with your profile.
         </CardFooter>
