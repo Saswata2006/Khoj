@@ -10,20 +10,41 @@ export const NO_STORE_HEADERS = {
 
 export const MAX_LISTING_JSON_BYTES = 64 * 1024; // 64 KiB cap for JSON listing payloads
 
+const EMPTY_OPTIONAL_QUERY_KEYS = new Set([
+  "q",
+  "category",
+  "condition",
+  "minPrice",
+  "maxPrice",
+  "location",
+  "sort",
+  "page",
+  "limit",
+  "status",
+]);
+
 /**
- * Extracts URL query parameters into a plain object, omitting empty values
- * so optional Zod filters fall back to `undefined` cleanly.
+ * Extracts URL query parameters into a plain object, omitting empty values ONLY
+ * for recognized optional filter keys while preserving unsupported keys and
+ * duplicate values so strict validators reject unsupported/ambiguous inputs.
  */
 export function searchParamsToRecord(
   requestUrl: string
-): Record<string, string> {
+): Record<string, string | string[]> {
   const url = new URL(requestUrl);
-  const query: Record<string, string> = {};
-  url.searchParams.forEach((value, key) => {
-    if (value !== "") {
-      query[key] = value;
+  const query: Record<string, string | string[]> = {};
+  for (const key of new Set(url.searchParams.keys())) {
+    const rawValues = url.searchParams.getAll(key);
+    const values = EMPTY_OPTIONAL_QUERY_KEYS.has(key)
+      ? rawValues.filter((value) => value !== "")
+      : rawValues;
+
+    if (values.length === 1) {
+      query[key] = values[0];
+    } else if (values.length > 1) {
+      query[key] = values;
     }
-  });
+  }
   return query;
 }
 

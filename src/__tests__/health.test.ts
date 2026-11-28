@@ -1,5 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+vi.mock("next/server", async () => {
+  const actual = await vi.importActual<typeof import("next/server")>(
+    "next/server"
+  );
+  return {
+    ...actual,
+    connection: vi.fn().mockResolvedValue(undefined),
+  };
+});
+
 // Mock the Prisma client to ensure unit tests do NOT touch the live Neon database
 vi.mock("@/lib/prisma", () => ({
   prisma: {
@@ -7,6 +17,7 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
+import { connection } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { GET } from "@/app/api/health/route";
 
@@ -49,5 +60,12 @@ describe("Health API Route (/api/health)", () => {
     expect(stringified).not.toContain("secret123");
     expect(stringified).not.toContain("neon.tech");
     expect(stringified).not.toContain("FATAL");
+  });
+
+  it("defers to connection() before querying Prisma so build-time prerendering skips DB I/O", async () => {
+    vi.mocked(connection).mockRejectedValueOnce(new Error("PRERENDER_ABORT"));
+
+    await expect(GET()).rejects.toThrow("PRERENDER_ABORT");
+    expect(prisma.$queryRaw).not.toHaveBeenCalled();
   });
 });

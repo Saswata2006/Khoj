@@ -25,9 +25,13 @@ export const MARKETPLACE_STATUSES = ["ACTIVE", "SOLD", "REMOVED"] as const;
 
 export const MARKETPLACE_SORT_OPTIONS = [
   "newest",
+  "oldest",
   "price_asc",
   "price_desc",
 ] as const;
+
+export const MAX_SEARCH_QUERY_LENGTH = 100;
+export const MAX_LOCATION_FILTER_LENGTH = 120;
 
 export const DEFAULT_MARKETPLACE_PAGE = 1;
 export const DEFAULT_MARKETPLACE_LIMIT = 12;
@@ -127,45 +131,131 @@ export const changeMarketplaceStatusSchema = z
   .strict();
 
 // ---------------------------------------------------------------------------
-// Query Parameter Schemas
+// Query Parameter Helpers & Schemas (strictly validated)
 // ---------------------------------------------------------------------------
+
+const HAS_CONTROL_CHARS_RE = /[\x00-\x1F\x7F]/;
+const STRICT_NON_NEGATIVE_PRICE_RE = /^-?(?:\d+(?:\.\d+)?|\.\d+)$/;
+const STRICT_INT_STRING_RE = /^-?\d+$/;
+
+function parseBoundedIntQueryValue(
+  raw: unknown,
+  min: number,
+  max: number
+): unknown {
+  if (raw === undefined) return undefined;
+
+  let parsed: number;
+  if (typeof raw === "number") {
+    parsed = raw;
+  } else if (typeof raw === "string") {
+    const trimmed = raw.trim();
+    if (!STRICT_INT_STRING_RE.test(trimmed)) {
+      return Number.NaN;
+    }
+    parsed = Number(trimmed);
+  } else {
+    return Number.NaN;
+  }
+
+  if (!Number.isInteger(parsed)) return Number.NaN;
+  if (parsed < min || parsed > max) return parsed;
+  return parsed;
+}
+
+function makeBoundedIntQuerySchema(
+  label: string,
+  min: number,
+  max: number,
+  defaultValue: number
+) {
+  return z.preprocess(
+    (raw) => parseBoundedIntQueryValue(raw, min, max),
+    z
+      .number({ error: `${label} must be an integer.` })
+      .int(`${label} must be an integer.`)
+      .min(min, `${label} must be at least ${min}.`)
+      .max(max, `${label} cannot exceed ${max}.`)
+      .default(defaultValue)
+  );
+}
+
+function makeOptionalQueryPriceSchema(label: string) {
+  return z.preprocess(
+    (raw): unknown => {
+      if (raw === undefined) return undefined;
+      if (typeof raw === "number") return raw;
+      if (typeof raw === "string") {
+        const trimmed = raw.trim();
+        if (!STRICT_NON_NEGATIVE_PRICE_RE.test(trimmed)) {
+          return Number.NaN;
+        }
+        return Number(trimmed);
+      }
+      return Number.NaN;
+    },
+    z
+      .number({ error: `${label} must be a valid number.` })
+      .finite(`${label} must be a finite number.`)
+      .min(0, `${label} cannot be negative.`)
+      .max(
+        MAX_PRICE_INR,
+        `${label} cannot exceed ${MAX_PRICE_INR.toLocaleString("en-IN")} INR.`
+      )
+      .refine((val) => Math.abs(val * 100 - Math.round(val * 100)) < 1e-6, {
+        message: `${label} can have at most 2 decimal places.`,
+      })
+      .transform((val) => Math.round(val * 100) / 100)
+      .optional()
+  );
+}
+
+function makeOptionalNormalizedTextFilterSchema(
+  label: string,
+  maxLength: number
+) {
+  return z
+    .string({ error: `${label} must be a text string.` })
+    .max(500, `${label} must be ${maxLength} characters or fewer.`)
+    .refine((val) => !HAS_CONTROL_CHARS_RE.test(val), {
+      message: `${label} contains unsupported control characters.`,
+    })
+    .transform((val) => val.trim().replace(/\s+/g, " "))
+    .refine((val) => val.length <= maxLength, {
+      message: `${label} must be ${maxLength} characters or fewer.`,
+    })
+    .transform((val) => (val.length > 0 ? val : undefined))
+    .optional();
+}
 
 export const listMarketplaceQuerySchema = z
   .object({
-    page: z.coerce
-      .number()
-      .int("Page must be an integer.")
-      .min(1, "Page must be at least 1.")
-      .max(1000, "Page is out of bounds.")
-      .default(DEFAULT_MARKETPLACE_PAGE),
-    limit: z.coerce
-      .number()
-      .int("Limit must be an integer.")
-      .min(1, "Limit must be at least 1.")
-      .max(MAX_MARKETPLACE_LIMIT, `Limit cannot exceed ${MAX_MARKETPLACE_LIMIT}.`)
-      .default(DEFAULT_MARKETPLACE_LIMIT),
+    q: makeOptionalNormalizedTextFilterSchema(
+      "Search query",
+      MAX_SEARCH_QUERY_LENGTH
+    ),
     category: listingCategorySchema.optional(),
     condition: listingConditionSchema.optional(),
-    search: z
-      .string()
-      .trim()
-      .max(100, "Search query must be 100 characters or fewer.")
-      .optional()
-      .transform((v) => (v && v.length > 0 ? v : undefined)),
-    minPrice: z.coerce
-      .number()
-      .finite()
-      .min(0, "Minimum price cannot be negative.")
-      .max(MAX_PRICE_INR)
-      .optional(),
-    maxPrice: z.coerce
-      .number()
-      .finite()
-      .min(0, "Maximum price cannot be negative.")
-      .max(MAX_PRICE_INR)
-      .optional(),
-    sort: z.enum(MARKETPLACE_SORT_OPTIONS).default("newest"),
+    minPrice: makeOptionalQueryPriceSchema("Minimum price"),
+    maxPrice: makeOptionalQueryPriceSchema("Maximum price"),
+    location: makeOptionalNormalizedTextFilterSchema(
+      "Location filter",
+      MAX_LOCATION_FILTER_LENGTH
+    ),
+    sort: z
+      .enum(MARKETPLACE_SORT_OPTIONS, {
+        error: "Unsupported sort option.",
+      })
+      .default("newest"),
+    page: makeBoundedIntQuerySchema("Page", 1, 1000, DEFAULT_MARKETPLACE_PAGE),
+    limit: makeBoundedIntQuerySchema(
+      "Limit",
+      1,
+      MAX_MARKETPLACE_LIMIT,
+      DEFAULT_MARKETPLACE_LIMIT
+    ),
   })
+  .strict()
   .refine(
     (q) =>
       q.minPrice === undefined ||
@@ -178,18 +268,13 @@ export const listMarketplaceQuerySchema = z
   );
 
 export const myListingsQuerySchema = z.object({
-  page: z.coerce
-    .number()
-    .int("Page must be an integer.")
-    .min(1, "Page must be at least 1.")
-    .max(1000, "Page is out of bounds.")
-    .default(DEFAULT_MARKETPLACE_PAGE),
-  limit: z.coerce
-    .number()
-    .int("Limit must be an integer.")
-    .min(1, "Limit must be at least 1.")
-    .max(MAX_MARKETPLACE_LIMIT, `Limit cannot exceed ${MAX_MARKETPLACE_LIMIT}.`)
-    .default(DEFAULT_MARKETPLACE_LIMIT),
+  page: makeBoundedIntQuerySchema("Page", 1, 1000, DEFAULT_MARKETPLACE_PAGE),
+  limit: makeBoundedIntQuerySchema(
+    "Limit",
+    1,
+    MAX_MARKETPLACE_LIMIT,
+    DEFAULT_MARKETPLACE_LIMIT
+  ),
   status: marketplaceStatusSchema.optional(),
 });
 

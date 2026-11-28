@@ -1,0 +1,70 @@
+name: Khoj CI
+
+on:
+  push:
+    branches:
+      - main
+      - "feat/**"
+      - "fix/**"
+      - "chore/**"
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Verify Schema, Types, Lint, Tests & Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    # Clearly labeled non-sensitive CI-only placeholders.
+    # No live Neon DB, Gmail SMTP, Cloudinary, or production secrets are used.
+    # Keep NODE_ENV unset at job level so `npm ci` installs devDependencies.
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_APP_NAME: "Khoj"
+      NEXT_PUBLIC_APP_URL: "http://localhost:3000"
+      NEXT_PUBLIC_CAMPUS_NAME: "Community"
+      DATABASE_URL: "postgresql://ci_placeholder:ci_placeholder@127.0.0.1:5432/khoj_ci?sslmode=disable"
+      DIRECT_URL: "postgresql://ci_placeholder:ci_placeholder@127.0.0.1:5432/khoj_ci?sslmode=disable"
+      BETTER_AUTH_URL: "http://localhost:3000"
+      BETTER_AUTH_SECRET: "ci-only-non-secret-auth-placeholder-not-for-production-0001"
+      OTP_HASH_SECRET: "ci-only-non-secret-otp-hmac-placeholder-min-32-characters"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.14.0"
+          cache: "npm"
+
+      - name: Install dependencies (clean lockfile)
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Validate Prisma schema
+        run: npx prisma validate
+
+      - name: Run TypeScript typecheck
+        run: npx tsc --noEmit
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run automated test suite (Vitest)
+        run: npm run test
+
+      - name: Build Next.js production bundle
+        run: npm run build

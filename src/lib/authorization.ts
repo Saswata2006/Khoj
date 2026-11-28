@@ -19,9 +19,10 @@ type AuthUser = typeof auth.$Infer.Session.user;
  * Safe to call in Server Components, Route Handlers, and Server Actions.
  */
 export async function getCurrentUser(): Promise<AuthUser | null> {
+  const requestHeaders = await headers();
   try {
     const session = await auth.api.getSession({
-      headers: await headers(),
+      headers: requestHeaders,
     });
     return session?.user ?? null;
   } catch {

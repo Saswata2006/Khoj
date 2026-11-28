@@ -8,6 +8,7 @@ import {
   listingIdSchema,
   myListingsQuerySchema,
   updateMarketplaceListingSchema,
+  type ListMarketplaceQuery,
 } from "@/lib/validators/listing";
 
 // ---------------------------------------------------------------------------
@@ -62,6 +63,20 @@ export interface MarketplaceListingDTO {
   images: PublicListingImage[];
 }
 
+export interface MarketplaceListingCardDTO {
+  id: string;
+  title: string;
+  type: "SALE";
+  category: Category;
+  condition: Condition | null;
+  price: number;
+  location: string;
+  status: ListingStatus;
+  createdAt: Date;
+  updatedAt: Date;
+  images: PublicListingImage[];
+}
+
 export interface PaginatedMarketplaceListings {
   listings: MarketplaceListingDTO[];
   pagination: {
@@ -72,6 +87,11 @@ export interface PaginatedMarketplaceListings {
     hasNextPage: boolean;
     hasPreviousPage: boolean;
   };
+}
+
+export interface PaginatedMarketplaceListingCards {
+  listings: MarketplaceListingCardDTO[];
+  pagination: PaginatedMarketplaceListings["pagination"];
 }
 
 /**
@@ -107,10 +127,36 @@ const MARKETPLACE_LISTING_SELECT = {
   },
 } as const;
 
-type SelectedListingRow = {
+/**
+ * Minimal projection for `/marketplace` product grid cards.
+ * Omits `@db.Text` `description` (avoiding TOAST fetches and RSC bloat),
+ * omits unused `user` join, and limits thumbnail selection to 1 primary photo.
+ */
+const MARKETPLACE_CARD_SELECT = {
+  id: true,
+  title: true,
+  type: true,
+  category: true,
+  condition: true,
+  price: true,
+  location: true,
+  status: true,
+  createdAt: true,
+  updatedAt: true,
+  images: {
+    select: {
+      id: true,
+      imageUrl: true,
+      createdAt: true,
+    },
+    orderBy: { createdAt: "asc" },
+    take: 1,
+  },
+} as const;
+
+type SelectedListingCardRow = {
   id: string;
   title: string;
-  description: string;
   type: "SALE" | "LOST" | "FOUND";
   category: Category;
   condition: Condition | null;
@@ -119,9 +165,35 @@ type SelectedListingRow = {
   status: ListingStatus;
   createdAt: Date;
   updatedAt: Date;
-  user: PublicListingSeller;
   images: PublicListingImage[];
 };
+
+type SelectedListingRow = SelectedListingCardRow & {
+  description: string;
+  user: PublicListingSeller;
+};
+
+function toMarketplaceCardDTO(
+  row: SelectedListingCardRow
+): MarketplaceListingCardDTO {
+  return {
+    id: row.id,
+    title: row.title,
+    type: "SALE",
+    category: row.category,
+    condition: row.condition,
+    price: row.price !== null ? Number(row.price) : 0,
+    location: row.location,
+    status: row.status,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+    images: row.images.slice(0, 1).map((img) => ({
+      id: img.id,
+      imageUrl: img.imageUrl,
+      createdAt: img.createdAt,
+    })),
+  };
+}
 
 function toMarketplaceDTO(row: SelectedListingRow): MarketplaceListingDTO {
   return {
@@ -150,15 +222,18 @@ function toMarketplaceDTO(row: SelectedListingRow): MarketplaceListingDTO {
 }
 
 function buildOrderBy(
-  sort: "newest" | "price_asc" | "price_desc"
+  sort: "newest" | "oldest" | "price_asc" | "price_desc"
 ): Prisma.ListingOrderByWithRelationInput[] {
+  if (sort === "oldest") {
+    return [{ createdAt: "asc" }, { id: "asc" }];
+  }
   if (sort === "price_asc") {
-    return [{ price: "asc" }, { createdAt: "desc" }];
+    return [{ price: "asc" }, { createdAt: "desc" }, { id: "desc" }];
   }
   if (sort === "price_desc") {
-    return [{ price: "desc" }, { createdAt: "desc" }];
+    return [{ price: "desc" }, { createdAt: "desc" }, { id: "desc" }];
   }
-  return [{ createdAt: "desc" }];
+  return [{ createdAt: "desc" }, { id: "desc" }];
 }
 
 function buildPaginationMeta(page: number, limit: number, total: number) {
@@ -205,27 +280,25 @@ export async function createMarketplaceListing(
   return toMarketplaceDTO(created);
 }
 
-/**
- * Retrieves paginated public marketplace listings (`type: "SALE"`, `status: "ACTIVE"`).
- * Lost & Found listings are strictly excluded.
- */
-export async function getPublicMarketplaceListings(
-  rawQuery: unknown
-): Promise<PaginatedMarketplaceListings> {
-  const query = listMarketplaceQuerySchema.parse(rawQuery ?? {});
-
-  const where: Prisma.ListingWhereInput = {
+function buildPublicMarketplaceWhere(
+  query: ListMarketplaceQuery
+): Prisma.ListingWhereInput {
+  return {
     type: "SALE",
     status: "ACTIVE",
     ...(query.category ? { category: query.category } : {}),
     ...(query.condition ? { condition: query.condition } : {}),
-    ...(query.search
+    ...(query.q
       ? {
           OR: [
-            { title: { contains: query.search, mode: "insensitive" } },
-            { description: { contains: query.search, mode: "insensitive" } },
-            { location: { contains: query.search, mode: "insensitive" } },
+            { title: { contains: query.q, mode: "insensitive" } },
+            { description: { contains: query.q, mode: "insensitive" } },
           ],
+        }
+      : {}),
+    ...(query.location
+      ? {
+          location: { contains: query.location, mode: "insensitive" },
         }
       : {}),
     ...(query.minPrice !== undefined || query.maxPrice !== undefined
@@ -241,7 +314,18 @@ export async function getPublicMarketplaceListings(
         }
       : {}),
   };
+}
 
+/**
+ * Retrieves paginated public marketplace listings (`type: "SALE"`, `status: "ACTIVE"`)
+ * with full API projection (`description`, `seller`, all images) for `GET /api/listings`.
+ * Lost & Found records and REMOVED/SOLD listings are strictly excluded.
+ */
+export async function getPublicMarketplaceListings(
+  rawQuery: unknown
+): Promise<PaginatedMarketplaceListings> {
+  const query = listMarketplaceQuerySchema.parse(rawQuery ?? {});
+  const where = buildPublicMarketplaceWhere(query);
   const skip = (query.page - 1) * query.limit;
 
   const [rows, total] = await Promise.all([
@@ -257,6 +341,35 @@ export async function getPublicMarketplaceListings(
 
   return {
     listings: rows.map(toMarketplaceDTO),
+    pagination: buildPaginationMeta(query.page, query.limit, total),
+  };
+}
+
+/**
+ * Retrieves paginated public marketplace cards (`type: "SALE"`, `status: "ACTIVE"`)
+ * using `MARKETPLACE_CARD_SELECT` for `/marketplace` SSR pages (omits `@db.Text`
+ * `description`, skips unused `users` join, and fetches at most 1 primary image).
+ */
+export async function getPublicMarketplaceListingCards(
+  rawQuery: unknown
+): Promise<PaginatedMarketplaceListingCards> {
+  const query = listMarketplaceQuerySchema.parse(rawQuery ?? {});
+  const where = buildPublicMarketplaceWhere(query);
+  const skip = (query.page - 1) * query.limit;
+
+  const [rows, total] = await Promise.all([
+    prisma.listing.findMany({
+      where,
+      select: MARKETPLACE_CARD_SELECT,
+      orderBy: buildOrderBy(query.sort),
+      skip,
+      take: query.limit,
+    }),
+    prisma.listing.count({ where }),
+  ]);
+
+  return {
+    listings: rows.map(toMarketplaceCardDTO),
     pagination: buildPaginationMeta(query.page, query.limit, total),
   };
 }
@@ -345,7 +458,7 @@ export async function getUserMarketplaceListings(
     prisma.listing.findMany({
       where,
       select: MARKETPLACE_LISTING_SELECT,
-      orderBy: [{ createdAt: "desc" }],
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       skip,
       take: query.limit,
     }),

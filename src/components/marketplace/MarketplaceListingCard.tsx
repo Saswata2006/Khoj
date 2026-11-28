@@ -5,7 +5,7 @@ import {
   getCategoryLabel,
   getConditionMeta,
   type CloudinaryDeliveryPolicy,
-  type MarketplaceListingClientDTO,
+  type MarketplaceListingCardDTO,
 } from "@/lib/marketplace-ui";
 import { MarketplaceImage } from "@/components/marketplace/MarketplaceImage";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 export interface MarketplaceListingCardProps {
-  listing: MarketplaceListingClientDTO;
+  listing: MarketplaceListingCardDTO;
   showStatus?: boolean;
   deliveryPolicy?: CloudinaryDeliveryPolicy;
 }
